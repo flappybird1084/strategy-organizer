@@ -1,11 +1,20 @@
-
-<!-- console.log(await fetchTeamData.fetchAllEventCodesCurrentYear(10252)); -->
  <h1>Welcome to the Main Page for Team <%=team%></h1>
 <h2>event codes</h2>
 
 <ul>
-  <% eventCodes.forEach(eventCode => { %>
-    <li><%=eventCode%></li>
-  <% }); %>
-</ul>
-
+    <% eventCodes.forEach(eventCode => { %>
+      <li>
+          <%=eventCode%>
+          <ol>
+              <% allMatchCodes.forEach(matchArray => { %>
+                <% matchArray.forEach(matchKey => { %>
+                    <% if (matchKey.includes(eventCode)) { %>
+                      <li><%=matchKey%></li>
+                    <% } %>
+              <% }); %>
+            <% }); %>
+        </ol>
+    </li>
+    <% }); %>
+  </ul>
+  

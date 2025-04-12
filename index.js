@@ -60,16 +60,28 @@ app.get('/', async(req, res) => {
  
   // console.log(await fetchTeamData.fetchTeamDataStatbotics(1));
   // console.log(await fetchTeamData.fetchAllEventsCurrentYearTBA(1));
-  console.log(await fetchTeamData.fetchAllEventCodesCurrentYear(10252));
+  // console.log(await fetchTeamData.fetchAllEventCodesCurrentYear(10252));
+  // console.log(await fetchTeamData.fetchAllMatchesAtEventTBA(10252, "cabe"));
+  // console.log(await fetchTeamData.fetchAllMatchKeysAtEventTBA(10252, "casj"));
 
   res.sendFile("index.html", { root: path.join(__dirname, 'public') });
   //temp for now. we can do login later
 });
 
-app.get('/:team/', async (req, res) => {
+app.get('/team/:team/', async (req, res) => {
   const team = req.params.team;
   const eventCodes = await fetchTeamData.fetchAllEventCodesCurrentYear(team);
-  res.render('mainpage', { team , eventCodes });
+  const allMatchCodes = [];
+  for (const eventCode of eventCodes) {
+    const matchKeys = await fetchTeamData.fetchAllMatchKeysAtEventTBA(team, eventCode);
+    allMatchCodes.push(matchKeys);
+  }
+  res.render('mainpage', { team , eventCodes , allMatchCodes});
+});
+
+app.get('/redirect/team/', async (req, res) => {
+  const team = req.query.team;
+  res.redirect(`/team/${team}`);
 });
 
 app.listen(3000, () => {
