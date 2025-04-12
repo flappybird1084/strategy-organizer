@@ -3,6 +3,8 @@ const path = require('path');
 var methodOverride = require('method-override');
 const app = express();
 require('dotenv').config();
+const TeamDataFetcher = require('./util.js');
+const fetchTeamData = new TeamDataFetcher();
 
 const apiKey = process.env.API_KEY;
 app.use(express.urlencoded({ extended: true }));
@@ -54,12 +56,13 @@ app.use('/api/statbotics', (req, res) => {
 
 
 
-app.get('/', (req, res) => {
+app.get('/', async(req, res) => {
   // console.log(path.join(__dirname, 'public', 'index.html'));
   // res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  console.log(await fetchTeamData.fetchTeamDataStatbotics(1));
+  console.log(await fetchTeamData.fetchAllEventsCurrentYearTBA(1));
+
   res.sendFile("index.html", { root: path.join(__dirname, 'public') });
-
-
   //temp for now. we can do login later
 });
 
