@@ -49,6 +49,23 @@ class TeamDataFetcher {
       throw error; // rethrow the error if you want to handle it further up the call stack
     }
   }
+
+  async fetchAllEventCodesCurrentYear(teamId, year = 2025) {
+    const eventCodes = [];
+    try{
+      const allEvents = await this.fetchAllEventsCurrentYearTBA(teamId, year);
+      allEvents.forEach(event => {
+        const eventName = event.event_code;
+        console.log(eventName);
+        eventCodes.push(eventName);
+      });
+    }
+    catch (error){
+      console.error(`Error fetching events from TBA:`, error);
+      throw error; // rethrow the error if you want to handle it further up the call stack
+    }
+    return eventCodes;
+  }
 }
 
 module.exports = TeamDataFetcher;

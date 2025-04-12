@@ -57,18 +57,19 @@ app.use('/api/statbotics', (req, res) => {
 
 
 app.get('/', async(req, res) => {
-  // console.log(path.join(__dirname, 'public', 'index.html'));
-  // res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  console.log(await fetchTeamData.fetchTeamDataStatbotics(1));
-  console.log(await fetchTeamData.fetchAllEventsCurrentYearTBA(1));
+ 
+  // console.log(await fetchTeamData.fetchTeamDataStatbotics(1));
+  // console.log(await fetchTeamData.fetchAllEventsCurrentYearTBA(1));
+  console.log(await fetchTeamData.fetchAllEventCodesCurrentYear(10252));
 
   res.sendFile("index.html", { root: path.join(__dirname, 'public') });
   //temp for now. we can do login later
 });
 
-app.get('/:team/', (req, res) => {
+app.get('/:team/', async (req, res) => {
   const team = req.params.team;
-  res.render('mainpage', { team });
+  const eventCodes = await fetchTeamData.fetchAllEventCodesCurrentYear(team);
+  res.render('mainpage', { team , eventCodes });
 });
 
 app.listen(3000, () => {
