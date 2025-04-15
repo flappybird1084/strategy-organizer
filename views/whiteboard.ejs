@@ -12,18 +12,40 @@
     #whiteboard {
         background-color: white;
         cursor: crosshair;
-        width: 1000px;
-        height: 600px;
+        width: 80%;
+        height: auto;
+        min-height: 300px;
+        max-height: 500px;
         background-image: url(/images/reefscape-bg.png);
         background-size: cover; /* This will make the image cover the entire whiteboard */
         background-repeat: no-repeat; /* This will prevent the image from repeating */
         background-position: center; /* This will center the image */   
     }
+
+    .draggable {
+        position: absolute;
+        cursor: grab;
+        background-color: red;
+        width: 50px;
+        height: 50px;
+    }
+
+    #whiteboard-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
   </style>
 </head>
 <body>
+    <div id="whiteboard-container">
+      <canvas id="whiteboard"></canvas>
 
-  <canvas id="whiteboard"></div>
+      <div class="draggable" draggable="true" style="top: 10%; left: 43%;">
+          <!-- <img src="/images/draggable-object.png" width="50"> -->
+      </div>
+
+    </div>  
 
   <script>
     const whiteboard = document.getElementById('whiteboard');
@@ -57,8 +79,8 @@
     whiteboard.addEventListener('mousemove', (e) => {
       if (!drawing) return;
 
-      const x = e.x*whiteboard.width / whiteboard.clientWidth;
-      const y = e.y*whiteboard.height / whiteboard.clientHeight;
+      const x = e.offsetX*whiteboard.width / whiteboard.clientWidth;
+      const y = e.offsetY*whiteboard.height / whiteboard.clientHeight;
 
       ctx.beginPath();
       ctx.lineWidth = brushSize;
@@ -84,6 +106,37 @@
     // Initial resize
     whiteboard.width = window.innerWidth;
     whiteboard.height = window.innerHeight;
+
+
+    const draggables = document.querySelectorAll('.draggable');
+
+    draggables.forEach(draggable => {
+      let offsetX, offsetY;
+
+      draggable.addEventListener('mousedown', (e) => {
+        offsetX = e.clientX - draggable.offsetLeft;
+        offsetY = e.clientY - draggable.offsetTop;
+        draggable.style.cursor = 'grabbing';
+        draggable.classList.add('dragging');
+      });
+
+      draggable.addEventListener('dragstart', (e) => {
+        e.preventDefault(); // Prevent default drag behavior
+
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!draggable.classList.contains('dragging')) return;
+
+        draggable.style.left = `${e.clientX - offsetX}px`;
+        draggable.style.top = `${e.clientY - offsetY}px`;
+      });
+
+      document.addEventListener('mouseup', () => {
+        draggable.style.cursor = 'grab';
+        draggable.classList.remove('dragging');
+      });
+    });
   </script>
 
 </body>
