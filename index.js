@@ -14,6 +14,8 @@ app.use(methodOverride('_method'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(express.static('public'));
+
 app.use('/api/tba', (req, res) => {
   const reroutePath = req.originalUrl.replace('/api/tba', '');
   const fetchUrl = `https://www.thebluealliance.com/api/v3${reroutePath}`;
@@ -82,6 +84,10 @@ app.get('/team/:team/', async (req, res) => {
 app.get('/redirect/team/', async (req, res) => {
   const team = req.query.team;
   res.redirect(`/team/${team}`);
+});
+
+app.get('/dev/whiteboard/', async (req, res) => {
+  res.render("whiteboard");
 });
 
 app.listen(3000, () => {

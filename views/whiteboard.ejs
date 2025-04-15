@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Whiteboard</title>
+  <style>
+    body {
+        margin: 0;
+        overflow: hidden; 
+        background-color: bisque;
+    }
+
+    #whiteboard {
+        background-color: white;
+        cursor: crosshair;
+        width: 1000px;
+        height: 600px;
+        background-image: url(/images/reefscape-bg.png);
+        background-size: cover; /* This will make the image cover the entire whiteboard */
+        background-repeat: no-repeat; /* This will prevent the image from repeating */
+        background-position: center; /* This will center the image */   
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="whiteboard"></div>
+
+  <script>
+    const whiteboard = document.getElementById('whiteboard');
+    
+    const ctx = whiteboard.getContext('2d');
+    whiteboard.style.backgroundImage = 'url(/images/reefscape-bg.png)';
+
+
+    let drawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let brushSize = 5;
+    let brushColor = 'black';
+
+    whiteboard.addEventListener('mousedown', (e) => {
+      drawing = true;
+      lastX = e.offsetX * whiteboard.width / whiteboard.clientWidth;
+      lastY = e.offsetY * whiteboard.height / whiteboard.clientHeight;
+      console.log('mousedown at', e.offsetX, e.offsetY);
+    });
+
+    whiteboard.addEventListener('mouseup', () => {
+      drawing = false;
+    });
+
+    whiteboard.addEventListener('mouseout', () => {
+      drawing = false;
+        console.log('mouseout');
+    });
+
+    whiteboard.addEventListener('mousemove', (e) => {
+      if (!drawing) return;
+
+      const x = e.x*whiteboard.width / whiteboard.clientWidth;
+      const y = e.y*whiteboard.height / whiteboard.clientHeight;
+
+      ctx.beginPath();
+      ctx.lineWidth = brushSize;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = brushColor;
+
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+
+      lastX = x;
+      lastY = y;
+      console.log(`mousemove at ${x}, ${y}`);
+    });
+
+
+    // Optional: Resize the whiteboard on window resize
+    window.addEventListener('resize', () => {
+      whiteboard.width = window.innerWidth;
+      whiteboard.height = window.innerHeight;
+    });
+
+    // Initial resize
+    whiteboard.width = window.innerWidth;
+    whiteboard.height = window.innerHeight;
+  </script>
+
+</body>
+</html>
