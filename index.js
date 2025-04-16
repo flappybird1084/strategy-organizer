@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import methodOverride from 'method-override';
 import dotenv from 'dotenv';
 import { TeamDataFetcher } from './util.js';
 import { fileURLToPath } from 'url';
@@ -15,7 +14,6 @@ const apiKey = process.env.API_KEY;
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(methodOverride('_method'));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
