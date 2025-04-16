@@ -1,20 +1,26 @@
- <h1>Welcome to the Main Page for Team <%=team%></h1>
-<h2>event codes</h2>
+<head>
+  <title>Team Main Page</title>
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+</head>
+<body>
+  <h1>Welcome to the Main Page for Team <%=team%></h1>
+  <h2>event codes</h2>
 
-<ul>
-    <% eventCodes.forEach(eventCode => { %>
-      <li>
-          <%=eventCode%>
-          <ol>
-              <% allMatchCodes.forEach(matchArray => { %>
-                <% matchArray.forEach(matchKey => { %>
-                    <% if (matchKey.includes(eventCode)) { %>
-                      <li><%=matchKey%></li>
-                    <% } %>
+  <ul>
+      <% eventCodes.forEach(eventCode => { %>
+        <li>
+            <%=eventCode%>
+            <ol>
+                <% allMatchCodes.forEach(matchArray => { %>
+                  <% matchArray.forEach(matchKey => { %>
+                      <% if (matchKey.includes(eventCode)) { %>
+                        <li><%=matchKey%></li>
+                      <% } %>
+                <% }); %>
               <% }); %>
-            <% }); %>
-        </ol>
-    </li>
-    <% }); %>
-  </ul>
+          </ol>
+      </li>
+      <% }); %>
+    </ul>
+</body>
   
