@@ -14,7 +14,7 @@
                 <% allMatchCodes.forEach(matchArray => { %>
                   <% matchArray.forEach(matchKey => { %>
                       <% if (matchKey.includes(eventCode)) { %>
-                        <li><%=matchKey%></li>
+                        <li><a href='/match/<%=matchKey%>'><%=matchKey%></li>
                       <% } %>
                 <% }); %>
               <% }); %>

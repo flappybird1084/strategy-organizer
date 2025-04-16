@@ -95,6 +95,13 @@ app.get('/team/:team/', async (req, res) => {
   res.render('mainpage', { team , eventCodes , allMatchCodes});
 });
 
+app.get('/match/:matchKey', async (req, res) => {
+  const matchKey = req.params.matchKey;
+  const matchData = await fetchTeamData.fetchMatchDataTBA(matchKey);
+  res.render('match', { matchKey, matchData });
+  console.log(matchData.alliances.red);
+});
+
 app.get('/redirect/team/', async (req, res) => {
   const team = req.query.team;
   res.redirect(`/team/${team}`);

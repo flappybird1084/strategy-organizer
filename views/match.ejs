@@ -1,0 +1,41 @@
+<head>
+    <title>Match Page</title>
+    <link rel="stylesheet" href="/index.css">
+    <style>
+        .red{
+            background-color: rgb(255, 177, 177);
+        }
+
+        .blue{
+            background-color: rgb(177, 177, 255);
+        }
+    </style>
+</head>
+<body>
+    <h3>Match Page</h3>
+    <h4>Match Code: <%=matchKey%></h4>
+
+
+    <div id="teams-container">
+        <table>
+            <tr>
+                <!-- Red Teams -->
+                <% matchData.alliances.red.team_keys.forEach((key, i) => { %>
+                    <td class="team red" style="vertical-align: top;">
+                        <h4>Red Team <%=i + 1%></h4>
+                        <p><%=matchData.alliances.red.team_keys[i]%></p>
+                    </td>
+                <% }); %>
+            </tr>
+            <tr>
+                <!-- Blue Teams -->
+                <% matchData.alliances.blue.team_keys.forEach((key, i) => { %>
+                    <td class="team blue" style="vertical-align: top;">
+                        <h4>Blue Team <%=i + 1%></h4>
+                        <p><%=matchData.alliances.blue.team_keys[i]%></p>
+                    </td>
+                <% }); %>
+            </tr>
+        </table>
+    </div>
+</body>

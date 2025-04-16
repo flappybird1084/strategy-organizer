@@ -94,4 +94,18 @@ export class TeamDataFetcher {
       throw error; // rethrow the error if you want to handle it further up the call stack
     }
   }
+
+  async fetchMatchDataTBA(matchKey) {
+    try {
+      const response = await fetch(`http://localhost:3000/api/tba/match/${matchKey}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch matches for event ${eventCode}: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(`Error fetching matches for event ${eventCode}:`, error);
+      throw error; // rethrow the error if you want to handle it further up the call stack
+    }
+  }
 }
