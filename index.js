@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import { TeamDataFetcher } from './util.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { mongoose } from 'mongoose';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -19,6 +21,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(express.static('public'));
+
+mongoose.connect('mongodb://100.64.0.25:27017/strategydb', {})
+.then(() => {
+  console.log('Connected to MongoDB');
+})
+.catch(err => {
+  console.error('MongoDB connection error:', err);
+});
+
 
 app.use('/api/tba', (req, res) => {
   const reroutePath = req.originalUrl.replace('/api/tba', '');

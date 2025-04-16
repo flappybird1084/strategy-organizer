@@ -13,7 +13,7 @@
     #whiteboard {
         background-color: white;
         cursor: crosshair;
-        width: 80%;
+        width: 1000px;
         height: auto;
         min-height: 300px;
         max-height: 500px;
@@ -192,7 +192,8 @@
       clearWhiteboard();
     });
     saveButton.addEventListener('click', () => {
-      whiteboard.save();
+      // whiteboard.save();
+      console.log(strokes);
       alert('not implemented yet!!');
     });
     loadButton.addEventListener('click', () => {
