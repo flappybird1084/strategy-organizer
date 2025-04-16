@@ -45,7 +45,7 @@
     <button id="load-button">Load</button>
     <button id="undo-button">Undo</button>
     <button id="redo-button">Redo</button>
-    <button id="color-button">Change Color</button>
+    <input type="color" id="color-picker" value="#000000" title="Choose brush color">
   </div>
     <div id="whiteboard-container">
       <canvas id="whiteboard"></canvas>
@@ -60,6 +60,7 @@
   <script>
     let strokes = [];
     let currentStroke = [];
+    let redoStack = [];
     const whiteboard = document.getElementById('whiteboard');
     
     const ctx = whiteboard.getContext('2d');
@@ -70,6 +71,10 @@
     let lastY = 0;
     let brushSize = 5;
     let brushColor = 'black';
+    const colorPicker = document.getElementById('color-picker');
+    colorPicker.addEventListener('input', (e) => {
+      brushColor = e.target.value;
+    });
 
     whiteboard.addEventListener('mousedown', (e) => {
       if (e.target.classList.contains('draggable')) return;
@@ -84,6 +89,7 @@
       drawing = false;
       if (currentStroke.length > 0) {
         strokes.push(currentStroke);
+        redoStack = [];
       }
     });
 
@@ -180,6 +186,7 @@
     function clearWhiteboard() {
       ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
       strokes = [];
+      redoStack = [];
     }
 
     const clearButton = document.getElementById('clear-button');
@@ -200,11 +207,18 @@
       alert('not implemented yet!!');
     });
     undoButton.addEventListener('click', () => {
-      strokes.pop();
-      redrawWhiteboard();
+      if (strokes.length > 0) {
+        const undone = strokes.pop();
+        redoStack.push(undone);
+        redrawWhiteboard();
+      }
     });
     redoButton.addEventListener('click', () => {
-      whiteboard.redo();
+      if (redoStack.length > 0) {
+        const redone = redoStack.pop();
+        strokes.push(redone);
+        redrawWhiteboard();
+      }
     });
   </script>
 
