@@ -101,7 +101,8 @@ app.get('/redirect/team/', async (req, res) => {
 });
 
 app.get('/dev/whiteboard/', async (req, res) => {
-  res.render("whiteboard");
+  const teams = ["team1", "team2", "team3", "team4", "team5", "team6"];
+  res.render("whiteboard", {teams});
 });
 
 app.listen(3000, () => {
