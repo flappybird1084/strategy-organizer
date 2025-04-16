@@ -1,12 +1,18 @@
-const express = require('express');
-const path = require('path');
-var methodOverride = require('method-override');
-const app = express();
-require('dotenv').config();
-const TeamDataFetcher = require('./util.js');
+import express from 'express';
+import path from 'path';
+import methodOverride from 'method-override';
+import dotenv from 'dotenv';
+import { TeamDataFetcher } from './util.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+dotenv.config();
 const fetchTeamData = new TeamDataFetcher();
 
 const apiKey = process.env.API_KEY;
+const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride('_method'));
@@ -53,7 +59,6 @@ app.use('/api/statbotics', (req, res) => {
       res.status(500).json({ error: 'Error fetching data from TBA API' });
     });
 });
-
 
 
 

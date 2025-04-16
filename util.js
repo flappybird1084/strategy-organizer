@@ -19,7 +19,7 @@
 // // export default TeamDataFetcher;
 
 
-class TeamDataFetcher {
+export class TeamDataFetcher {
   async fetchTeamDataStatbotics(teamId) {
     try {
       const url = `http://localhost:3000/api/statbotics/team/${teamId}`;
@@ -95,6 +95,3 @@ class TeamDataFetcher {
     }
   }
 }
-
-module.exports = TeamDataFetcher;
-// export default TeamDataFetcher;
