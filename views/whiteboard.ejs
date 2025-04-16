@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Simple Whiteboard</title>
+  <title>dev whiteboard</title>
   <style>
     body {
         margin: 0;
@@ -37,6 +37,12 @@
   </style>
 </head>
 <body>
+  <button id="clear-button">Clear</button>
+  <button id="save-button">Save</button>
+  <button id="load-button">Load</button>
+  <button id="undo-button">Undo</button>
+  <button id="redo-button">Redo</button>
+  <button id="color-button">Change Color</button>
     <div id="whiteboard-container">
       <canvas id="whiteboard"></canvas>
 
@@ -54,6 +60,7 @@
     </div>  
 
   <script>
+    let lastWhiteBoardActions = [];
     const whiteboard = document.getElementById('whiteboard');
     
     const ctx = whiteboard.getContext('2d');
@@ -100,6 +107,7 @@
       lastX = x;
       lastY = y;
       console.log(`mousemove at ${x}, ${y}`);
+      lastWhiteBoardActions.push({ x, y, brushSize, brushColor });
     });
 
 
@@ -142,6 +150,35 @@
         draggable.style.cursor = 'grab';
         draggable.classList.remove('dragging');
       });
+    });
+
+    function clearWhiteboard() {
+      ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+    }
+
+    const clearButton = document.getElementById('clear-button');
+    const saveButton = document.getElementById('save-button');
+    const loadButton = document.getElementById('load-button');
+    const undoButton = document.getElementById('undo-button');
+    const redoButton = document.getElementById('redo-button');
+
+    clearButton.addEventListener('click', () => {
+      clearWhiteboard();
+    });
+    saveButton.addEventListener('click', () => {
+      whiteboard.save();
+      alert('not implemented yet!!');
+    });
+    loadButton.addEventListener('click', () => {
+      whiteboard.load();
+      alert('not implemented yet!!');
+    });
+    undoButton.addEventListener('click', () => {
+      whiteboard.undo();
+      
+    });
+    redoButton.addEventListener('click', () => {
+      whiteboard.redo();
     });
   </script>
 
