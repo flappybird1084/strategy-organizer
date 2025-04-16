@@ -54,7 +54,7 @@ app.use('/api/statbotics', (req, res) => {
     .then(data => res.json(data))
     .catch(error => {
       console.error('Error fetching data:', error);
-      res.status(500).json({ error: 'Error fetching data from TBA API' });
+      res.status(500).json({ error: 'Error fetching data from Statbotics API' });
     });
 });
 
