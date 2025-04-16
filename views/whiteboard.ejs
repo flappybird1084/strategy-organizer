@@ -34,30 +34,27 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        position: relative; /* added */
     }
   </style>
 </head>
 <body>
-  <button id="clear-button">Clear</button>
-  <button id="save-button">Save</button>
-  <button id="load-button">Load</button>
-  <button id="undo-button">Undo</button>
-  <button id="redo-button">Redo</button>
-  <button id="color-button">Change Color</button>
+  <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+    <button id="clear-button">Clear</button>
+    <button id="save-button">Save</button>
+    <button id="load-button">Load</button>
+    <button id="undo-button">Undo</button>
+    <button id="redo-button">Redo</button>
+    <button id="color-button">Change Color</button>
+  </div>
     <div id="whiteboard-container">
       <canvas id="whiteboard"></canvas>
-
       <div class="draggable" draggable="true" style="top: 10%; left: 43%; background-color: red;"></div> 
       <div class="draggable" draggable="true" style="top: 15%; left: 43%; background-color: orange;"></div> 
       <div class="draggable" draggable="true" style="top: 20%; left: 43%; background-color: yellow;"></div> 
       <div class="draggable" draggable="true" style="top: 10%; left: 57%; background-color: green;"></div> 
       <div class="draggable" draggable="true" style="top: 15%; left: 57%; background-color: blue;"></div> 
       <div class="draggable" draggable="true" style="top: 20%; left: 57%; background-color: purple;"></div> 
-
-
-
-
-
     </div>  
 
   <script>
@@ -124,14 +121,13 @@
 
 
     const draggables = document.querySelectorAll('.draggable');
+    let offsetX, offsetY;
 
     draggables.forEach(draggable => {
-      let offsetX, offsetY;
-
       draggable.addEventListener('mousedown', (e) => {
-        offsetX = e.clientX - draggable.offsetLeft;
-        offsetY = e.clientY - draggable.offsetTop;
-        draggable.style.cursor = 'grabbing';
+        const rect = draggable.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
         draggable.classList.add('dragging');
       });
 
@@ -143,8 +139,18 @@
       document.addEventListener('mousemove', (e) => {
         if (!draggable.classList.contains('dragging')) return;
 
-        draggable.style.left = `${e.clientX - offsetX}px`;
-        draggable.style.top = `${e.clientY - offsetY}px`;
+        const containerRect = document.getElementById('whiteboard-container').getBoundingClientRect();
+        const draggableWidth = draggable.offsetWidth;
+        const draggableHeight = draggable.offsetHeight;
+
+        let newLeft = e.clientX - offsetX;
+        let newTop = e.clientY - offsetY;
+
+        newLeft = Math.max(containerRect.left, Math.min(newLeft, containerRect.right - draggableWidth));
+        newTop = Math.max(containerRect.top, Math.min(newTop, containerRect.bottom - draggableHeight));
+
+        draggable.style.left = `${newLeft - containerRect.left}px`;
+        draggable.style.top = `${newTop - containerRect.top}px`;
       });
 
       document.addEventListener('mouseup', () => {
