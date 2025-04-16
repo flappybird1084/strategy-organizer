@@ -9,12 +9,12 @@
         .blue{
             background-color: rgb(177, 177, 255);
         }
+
     </style>
 </head>
 <body>
     <h3>Match Page</h3>
     <h4>Match Code: <%=matchKey%></h4>
-
 
     <div id="teams-container">
         <table>
@@ -22,8 +22,8 @@
                 <!-- Red Teams -->
                 <% matchData.alliances.red.team_keys.forEach((key, i) => { %>
                     <td class="team red" style="vertical-align: top;">
-                        <h4>Red Team <%=i + 1%></h4>
-                        <p><%=matchData.alliances.red.team_keys[i]%></p>
+                        <h4>Red <%=i + 1%></h4>
+                        <p><a style="color:black"href="https://www.thebluealliance.com/team/<%=matchData.alliances.red.team_keys[i].substring(3)%>" target="_blank"><%=matchData.alliances.red.team_keys[i]%></a></p>
                     </td>
                 <% }); %>
             </tr>
@@ -31,11 +31,14 @@
                 <!-- Blue Teams -->
                 <% matchData.alliances.blue.team_keys.forEach((key, i) => { %>
                     <td class="team blue" style="vertical-align: top;">
-                        <h4>Blue Team <%=i + 1%></h4>
-                        <p><%=matchData.alliances.blue.team_keys[i]%></p>
+                        <h4>Blue <%=i + 1%></h4>
+                        <p><a style="color:black"href="https://www.thebluealliance.com/team/<%=matchData.alliances.blue.team_keys[i].substring(3)%>" target="_blank"><%=matchData.alliances.blue.team_keys[i]%></a></p>
                     </td>
                 <% }); %>
             </tr>
         </table>
+
+        <a href="/whiteboard/<%=matchKey%>" target="_blank">
+            <button id="whiteboard-button">Open Whiteboard</button>
     </div>
 </body>

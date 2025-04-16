@@ -23,12 +23,12 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 mongoose.connect('mongodb://100.64.0.25:27017/strategydb', {})
-.then(() => {
-  console.log('Connected to MongoDB');
-})
-.catch(err => {
-  console.error('MongoDB connection error:', err);
-});
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+  });
 
 
 app.use('/api/tba', (req, res) => {
@@ -72,8 +72,8 @@ app.use('/api/statbotics', (req, res) => {
 
 
 
-app.get('/', async(req, res) => {
- 
+app.get('/', async (req, res) => {
+
   // console.log(await fetchTeamData.fetchTeamDataStatbotics(1));
   // console.log(await fetchTeamData.fetchAllEventsCurrentYearTBA(1));
   // console.log(await fetchTeamData.fetchAllEventCodesCurrentYear(10252));
@@ -92,7 +92,7 @@ app.get('/team/:team/', async (req, res) => {
     const matchKeys = await fetchTeamData.fetchAllMatchKeysAtEventTBA(team, eventCode);
     allMatchCodes.push(matchKeys);
   }
-  res.render('mainpage', { team , eventCodes , allMatchCodes});
+  res.render('mainpage', { team, eventCodes, allMatchCodes });
 });
 
 app.get('/match/:matchKey', async (req, res) => {
@@ -109,7 +109,18 @@ app.get('/redirect/team/', async (req, res) => {
 
 app.get('/dev/whiteboard/', async (req, res) => {
   const teams = ["team1", "team2", "team3", "team4", "team5", "team6"];
-  res.render("whiteboard", {teams});
+  res.render("whiteboard", { teams });
+});
+
+app.get('/whiteboard/:matchKey', async (req, res) => {
+  const matchKey = req.params.matchKey;
+  const matchData = await fetchTeamData.fetchMatchDataTBA(matchKey);
+  const unformattedTeams = matchData.alliances.red.team_keys.concat(matchData.alliances.blue.team_keys);
+  const teams = [];
+  unformattedTeams.forEach(element => {
+    teams.push(element.substring(3));
+  });
+  res.render('whiteboard', { matchKey, matchData ,teams});
 });
 
 app.listen(3000, () => {
