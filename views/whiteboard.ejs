@@ -58,12 +58,12 @@
     </div>  
 
   <script>
-    let lastWhiteBoardActions = [];
+    let strokes = [];
+    let currentStroke = [];
     const whiteboard = document.getElementById('whiteboard');
     
     const ctx = whiteboard.getContext('2d');
     whiteboard.style.backgroundImage = 'url(/images/reefscape-bg-2.png)';
-
 
     let drawing = false;
     let lastX = 0;
@@ -72,6 +72,8 @@
     let brushColor = 'black';
 
     whiteboard.addEventListener('mousedown', (e) => {
+      if (e.target.classList.contains('draggable')) return;
+      currentStroke = [];
       drawing = true;
       lastX = e.offsetX * whiteboard.width / whiteboard.clientWidth;
       lastY = e.offsetY * whiteboard.height / whiteboard.clientHeight;
@@ -80,6 +82,9 @@
 
     whiteboard.addEventListener('mouseup', () => {
       drawing = false;
+      if (currentStroke.length > 0) {
+        strokes.push(currentStroke);
+      }
     });
 
     whiteboard.addEventListener('mouseout', () => {
@@ -88,10 +93,10 @@
     });
 
     whiteboard.addEventListener('mousemove', (e) => {
-      if (!drawing) return;
+      if (!drawing || e.target.classList.contains('draggable')) return;
 
-      const x = e.offsetX*whiteboard.width / whiteboard.clientWidth;
-      const y = e.offsetY*whiteboard.height / whiteboard.clientHeight;
+      const x = e.offsetX * whiteboard.width / whiteboard.clientWidth;
+      const y = e.offsetY * whiteboard.height / whiteboard.clientHeight;
 
       ctx.beginPath();
       ctx.lineWidth = brushSize;
@@ -102,12 +107,27 @@
       ctx.lineTo(x, y);
       ctx.stroke();
 
+      currentStroke.push({ x, y, lastX, lastY, brushSize, brushColor });
+
       lastX = x;
       lastY = y;
       console.log(`mousemove at ${x}, ${y}`);
-      lastWhiteBoardActions.push({ x, y, brushSize, brushColor });
     });
 
+    function redrawWhiteboard() {
+      ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+      for (const stroke of strokes) {
+        for (const action of stroke) {
+          ctx.beginPath();
+          ctx.lineWidth = action.brushSize;
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = action.brushColor;
+          ctx.moveTo(action.lastX, action.lastY);
+          ctx.lineTo(action.x, action.y);
+          ctx.stroke();
+        }
+      }
+    }
 
     // Optional: Resize the whiteboard on window resize
     window.addEventListener('resize', () => {
@@ -118,7 +138,6 @@
     // Initial resize
     whiteboard.width = window.innerWidth;
     whiteboard.height = window.innerHeight;
-
 
     const draggables = document.querySelectorAll('.draggable');
     let offsetX, offsetY;
@@ -133,7 +152,6 @@
 
       draggable.addEventListener('dragstart', (e) => {
         e.preventDefault(); // Prevent default drag behavior
-
       });
 
       document.addEventListener('mousemove', (e) => {
@@ -161,6 +179,7 @@
 
     function clearWhiteboard() {
       ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+      strokes = [];
     }
 
     const clearButton = document.getElementById('clear-button');
@@ -181,8 +200,8 @@
       alert('not implemented yet!!');
     });
     undoButton.addEventListener('click', () => {
-      whiteboard.undo();
-      
+      strokes.pop();
+      redrawWhiteboard();
     });
     redoButton.addEventListener('click', () => {
       whiteboard.redo();
