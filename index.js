@@ -102,10 +102,11 @@ app.get('/team/:team/', async (req, res) => {
   }
 });
 
-app.get('/match/:matchKey', async (req, res) => {
+app.get('/match/:matchKey/:team', async (req, res) => {
   const matchKey = req.params.matchKey;
   const matchData = await fetchTeamData.fetchMatchDataTBA(matchKey);
-  res.render('match', { matchKey, matchData });
+  const teamNumber = req.params.team;
+  res.render('match', { matchKey, matchData, teamNumber });
 });
 
 app.get('/redirect/team/', async (req, res) => {

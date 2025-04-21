@@ -1,6 +1,6 @@
 <head>
   <title>Team Main Page</title>
-  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
 <body>
   <h1>Welcome to the Main Page for Team <%=team%></h1>
@@ -14,7 +14,7 @@
                 <% allMatchCodes.forEach(matchArray => { %>
                   <% matchArray.forEach(matchKey => { %>
                       <% if (matchKey.includes(eventCode)) { %>
-                        <li><a href='/match/<%=matchKey%>'><%=matchKey%></li>
+                        <li><a href='/match/<%=matchKey%>/<%=team %>'><%=matchKey%></a></li>
                       <% } %>
                 <% }); %>
               <% }); %>

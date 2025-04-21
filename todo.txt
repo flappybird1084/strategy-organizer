@@ -1,7 +1,6 @@
 todo:
 
 make an actual 404 page?
-team mainpage events are linked to the last match from the previous event -> disable this link
 match page link reroute to home or team page
 
 
