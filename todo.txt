@@ -1,0 +1,12 @@
+todo:
+
+make an actual 404 page?
+team mainpage events are linked to the last match from the previous event -> disable this link
+match page link reroute to home or team page
+
+
+whiteboard:
+save and load from mongo (most important)
+different routes for auto/tele/end
+
+sharing (very hard, little gain?)

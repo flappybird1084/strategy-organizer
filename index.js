@@ -86,20 +86,26 @@ app.get('/', async (req, res) => {
 
 app.get('/team/:team/', async (req, res) => {
   const team = req.params.team;
-  const eventCodes = await fetchTeamData.fetchAllEventCodesCurrentYear(team);
-  const allMatchCodes = [];
-  for (const eventCode of eventCodes) {
-    const matchKeys = await fetchTeamData.fetchAllMatchKeysAtEventTBA(team, eventCode);
-    allMatchCodes.push(matchKeys);
+  try {
+    const eventCodes = await fetchTeamData.fetchAllEventCodesCurrentYear(team);
+    const allMatchCodes = [];
+
+    for (const eventCode of eventCodes) {
+      const matchKeys = await fetchTeamData.fetchAllMatchKeysAtEventTBA(team, eventCode);
+      allMatchCodes.push(matchKeys);
+    }
+
+    res.render('mainpage', { team, eventCodes, allMatchCodes });
+  } catch (error) {
+    console.error(`Error fetching data for team ${team}:`, error);
+    res.status(404).send(`Team ${team} not found <br> <a href="/">Go back</a>`);
   }
-  res.render('mainpage', { team, eventCodes, allMatchCodes });
 });
 
 app.get('/match/:matchKey', async (req, res) => {
   const matchKey = req.params.matchKey;
   const matchData = await fetchTeamData.fetchMatchDataTBA(matchKey);
   res.render('match', { matchKey, matchData });
-  console.log(matchData.alliances.red);
 });
 
 app.get('/redirect/team/', async (req, res) => {
