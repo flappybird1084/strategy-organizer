@@ -6,6 +6,9 @@
 //       const data = await response.json();
 //       return data;
 //     }
+
+import { set } from "mongoose";
+
   
 //     async fetchAllEventsCurrentYearTBA(teamId, year = 2025) {
 //       const url = `localhost:3000/api/tba/team/${"frc" + teamId}/events/${year}/matches`;
@@ -55,9 +58,9 @@ export class TeamDataFetcher {
     try{
       const allEvents = await this.fetchAllEventsCurrentYearTBA(teamId, year);
       allEvents.forEach(event => {
-        const eventName = event.event_code;
-        console.log(eventName);
-        eventCodes.push(eventName);
+        const eventCode = event.event_code;
+        // console.log(eventName);
+        eventCodes.push(eventCode);
       });
     }
     catch (error){
@@ -66,6 +69,8 @@ export class TeamDataFetcher {
     }
     return eventCodes;
   }
+
+
 
   async fetchAllMatchesAtEventTBA(teamId, eventCode, year = 2025) {
     try {
@@ -106,6 +111,32 @@ export class TeamDataFetcher {
     } catch (error) {
       console.error(`Error fetching matches for event ${eventCode}:`, error);
       throw error; // rethrow the error if you want to handle it further up the call stack
+    }
+  }
+
+  getFancyQualName(comp_level) {
+    switch(comp_level){
+      case 'qm':
+        return "Qualifying Match";
+      case 'sf':
+        return "Semifinal";
+      case 'f':
+        return "Final";
+      default:
+        return comp_level;
+    }
+  }
+
+  getFancyMatchNumber(comp_level, match_number, set_number) {
+    switch(comp_level){
+      case 'qm':
+        return match_number;
+      case 'sf':
+        return set_number;
+      case 'f':
+        return match_number;
+      default:
+        return match_number;
     }
   }
 }

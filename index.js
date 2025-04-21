@@ -87,15 +87,30 @@ app.get('/', async (req, res) => {
 app.get('/team/:team/', async (req, res) => {
   const team = req.params.team;
   try {
-    const eventCodes = await fetchTeamData.fetchAllEventCodesCurrentYear(team);
-    const allMatchCodes = [];
+    const allEvents = await fetchTeamData.fetchAllEventsCurrentYearTBA(team);
 
-    for (const eventCode of eventCodes) {
-      const matchKeys = await fetchTeamData.fetchAllMatchKeysAtEventTBA(team, eventCode);
-      allMatchCodes.push(matchKeys);
+    const eventCodesWithNames = allEvents.map(event => ({
+      event_code: event.event_code,
+      name: event.name
+    }));
+    
+    const allMatchData = [];
+
+    for (const eventCode of eventCodesWithNames.map(event => event.event_code)) {
+      const matchData = await fetchTeamData.fetchAllMatchesAtEventTBA(team, eventCode);
+      allMatchData.push(matchData.map(match => ({
+        key: match.key,
+        comp_level: match.comp_level,
+        match_number: match.match_number,
+        set_number: match.set_number,
+        fancy_comp_level: fetchTeamData.getFancyQualName(match.comp_level),
+        fancy_match_number: fetchTeamData.getFancyMatchNumber(match.comp_level, match.match_number, match.set_number),
+        
+      })));
     }
+    console.log(eventCodesWithNames)
 
-    res.render('mainpage', { team, eventCodes, allMatchCodes });
+    res.render('mainpage', { team, eventCodesWithNames, allMatchData });
   } catch (error) {
     console.error(`Error fetching data for team ${team}:`, error);
     res.status(404).send(`Team ${team} not found <br> <a href="/">Go back</a>`);

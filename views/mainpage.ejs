@@ -7,14 +7,14 @@
   <h2>event codes</h2>
 
   <ul>
-      <% eventCodes.forEach(eventCode => { %>
+      <% eventCodesWithNames.forEach(event => { %>
         <li>
-            <%=eventCode%>
+            <%=event.name%> (<%=event.event_code%>)
             <ol>
-                <% allMatchCodes.forEach(matchArray => { %>
-                  <% matchArray.forEach(matchKey => { %>
-                      <% if (matchKey.includes(eventCode)) { %>
-                        <li><a href='/match/<%=matchKey%>/<%=team %>'><%=matchKey%></a></li>
+                <% allMatchData.forEach(matchArray => { %>
+                  <% matchArray.forEach(match => { %>
+                      <% if (match.key.includes(event.event_code)) { %>
+                        <li><a href='/match/<%=match.key%>/<%=team %>'><%=match.fancy_comp_level%>-<%=match.fancy_match_number%></a></li>
                       <% } %>
                 <% }); %>
               <% }); %>
