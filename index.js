@@ -13,6 +13,8 @@ dotenv.config();
 const fetchTeamData = new TeamDataFetcher();
 
 const apiKey = process.env.API_KEY;
+const mongoIP = process.env.MONGO_IP;
+const mongoPort = process.env.MONGO_PORT;
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -22,7 +24,7 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('public'));
 
-mongoose.connect('mongodb://100.64.0.25:27017/strategydb', {})
+mongoose.connect(`mongodb://${mongoIP}:${mongoPort}/strategydb`, {})
   .then(() => {
     console.log('Connected to MongoDB');
   })
