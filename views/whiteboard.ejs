@@ -18,6 +18,17 @@
       border-right: 1px solid #ccc;
     }
 
+    .btn-link {
+      width: 180px;
+      background-color: #f5f5f5;
+      padding: 10px;
+      margin-left:-10px;
+      margin-bottom: -20px;
+      display: flex;
+      flex-direction: column;
+      gap: 0px;
+    }
+
     .draggable {
       position:absolute;
       cursor: grab;
@@ -71,6 +82,7 @@
 </head>
 <body>
   <div id="controls">
+    <a href="/match/<%=matchKey%>/<%=teamNumber%>" style="color:white; text-decoration: none;"><button id="back-button" style=" top: 10px; left: 10px; background-color: rgb(0, 119, 255); color:white;">⬅️ Back</a></button>
     <button id="clear-button">🧹 Clear</button>
     <button id="save-button">💾 Save</button>
     <button id="load-button">📂 Load</button>
@@ -93,6 +105,17 @@
         </div>
       </div>
     </div>
+
+    <br><br><br>
+    <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/autonomous" class="btn-link">
+      <button id="autonomous-button" style="background: rgb(255, 131, 131);"">🤖 Autonomous</button>
+    </a>
+    <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/teleoperated" class="btn-link">
+      <button id="teleop-button" style="background: rgb(107, 255, 198);"">🚀 Teleoperated</button>
+    </a>
+    <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/endgame" class="btn-link">
+      <button id="endgame-button" style="background: rgb(154, 99, 255);"">🏁 Endgame</button>
+    </a>
   </div>
 
     <div id="whiteboard-container">
@@ -273,7 +296,7 @@
           data: strokes,
           matchKey: '<%=matchKey%>',
           teamNumber: '<%=teamNumber%>',
-          gamePhase: 'autonomous',
+          gamePhase: '<%=gamePhase%>',
         })
       })
     });
