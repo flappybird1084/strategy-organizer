@@ -71,6 +71,9 @@ app.use('/api/statbotics', (req, res) => {
     });
 });
 
+
+
+
 const whiteboardSchema = new mongoose.Schema({
   matchKey: String,
   teamNumber: String,
@@ -136,7 +139,10 @@ app.get('/team/:team/', async (req, res) => {
     res.render('mainpage', { team, eventData, allMatchData });
   } catch (error) {
     console.error(`Error fetching data for team ${team}:`, error);
-    res.status(404).send(`Error 404<br>Team ${team} not found <br> <a href="/">Go back</a>`);
+    // res.status(404).send(`Error 404<br>Team ${team} not found <br> <a href="/">Go back</a>`);
+    var error = `Team ${team} not found`;
+    res.status(404).render('404', { error });
+
   }
 });
 
@@ -216,6 +222,11 @@ app.delete('/delete/whiteboard', async (req, res) => {
     console.error('Error deleting whiteboard data:', error);
     res.status(500).json({ error: 'Error deleting whiteboard data' });
   }
+});
+
+app.use((req, res, next) => {
+  var error = `Page not found`;
+  res.status(404).render('404', { error });
 });
 
 app.listen(3000, () => {

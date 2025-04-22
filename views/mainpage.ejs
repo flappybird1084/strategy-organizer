@@ -17,18 +17,18 @@
       <% eventData.forEach(event=> { %>
         <li>
           <%=event.name%> (<%=event.event_code%>, <%=event.end_date%>)
-                <ol>
-                  <% allMatchData.forEach(matchArray=> { %>
-                    <% matchArray.forEach(match=> { %>
-                      <% if (match.key.includes(event.event_code)) { %>
-                        <li><a href='/match/<%=match.key%>/<%=team %>'>
-                            <%=match.fancy_comp_level%>-<%=match.fancy_match_number%>
-                          </a></li>
-                        <% } %>
-                          <% }); %>
-                            <% }); %>
-                </ol>
+          <ol>
+            <% allMatchData.forEach(matchArray=> { %>
+              <% matchArray.forEach(match=> { %>
+                <% if (match.key.includes(event.event_code)) { %>
+                  <li><a href='/match/<%=match.key%>/<%=team %>'>
+                    <%=match.fancy_comp_level%>-<%=match.fancy_match_number%>
+                  </a></li>
+                <% } %>
+              <% }); %>
+            <% }); %>
+          </ol>
         </li>
-        <% }); %>
+      <% }); %>
     </ul>
 </body>

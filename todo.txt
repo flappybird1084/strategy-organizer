@@ -2,7 +2,6 @@ todo:
 
 make an actual 404 page?
 main page: sort events chronologically
-sort matches chronologically as well
 
 notes lmao??
 

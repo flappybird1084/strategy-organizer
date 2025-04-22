@@ -1,0 +1,22 @@
+<head>
+  <title>Team Main Page</title>
+  <link rel="stylesheet" href="/index.css">
+  <style>
+    .error-container {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 24px;
+
+    }
+  </style>
+</head>
+
+<body>
+  <%- include('header')-%>
+    <div class="error-container">
+
+      Error 404<br>
+      <%=error%> <br>
+      <a href="/">Go back</a>
+    </div>
+</body>
