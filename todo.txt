@@ -1,10 +1,12 @@
 todo:
 
 make an actual 404 page?
+main page: sort events chronologically
+sort matches chronologically as well
 
+notes lmao??
 
 whiteboard:
-save and load from mongo (most important)
-different routes for auto/tele/end
+
 
 sharing (very hard, little gain?)

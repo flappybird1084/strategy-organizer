@@ -11,7 +11,7 @@
   <ul>
       <% eventData.forEach(event => { %>
         <li>
-            <%=event.name%> (<%=event.event_code%>)
+            <%=event.name%> (<%=event.event_code%>, <%=event.end_date%>)
             <ol>
                 <% allMatchData.forEach(matchArray => { %>
                   <% matchArray.forEach(match => { %>

@@ -101,8 +101,17 @@ app.get('/team/:team/', async (req, res) => {
 
     const eventData = allEvents.map(event => ({
       event_code: event.event_code,
-      name: event.name
-    }));
+      name: event.name,
+      week: event.week,
+      end_date: event.end_date,
+    })).sort((a, b) => {
+      const parseDate = (str) => {
+        const [year, month, day] = str.split('-').map(Number);
+        return new Date(2000 + year, month - 1, day); // Add 2000 to get full year
+      };
+    
+      return parseDate(a.end_date) - parseDate(b.end_date);
+    });
     
     const allMatchData = [];
 
@@ -115,8 +124,12 @@ app.get('/team/:team/', async (req, res) => {
         set_number: match.set_number,
         fancy_comp_level: fetchTeamData.getFancyQualName(match.comp_level),
         fancy_match_number: fetchTeamData.getFancyMatchNumber(match.comp_level, match.match_number, match.set_number),
+        end_time: match.post_result_time,
         
-      })));
+      })).sort((a, b) => {
+        return a.end_time - b.end_time;
+      }));
+
     }
     // console.log(eventData)
 
