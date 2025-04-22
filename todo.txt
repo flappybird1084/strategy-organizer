@@ -1,7 +1,6 @@
 todo:
 
 make an actual 404 page?
-match page link reroute to home or team page
 
 
 whiteboard:
