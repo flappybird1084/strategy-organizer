@@ -71,6 +71,14 @@ app.use('/api/statbotics', (req, res) => {
     });
 });
 
+const whiteboardSchema = new mongoose.Schema({
+  matchKey: String,
+  teamNumber: String,
+  gamePhase: String,
+  data: Object
+});
+
+const Whiteboard = mongoose.model('Whiteboard', whiteboardSchema);
 
 
 
@@ -136,15 +144,50 @@ app.get('/dev/whiteboard/', async (req, res) => {
   res.render("whiteboard", { teams });
 });
 
-app.get('/whiteboard/:matchKey', async (req, res) => {
+app.get('/whiteboard/:matchKey/:teamNumber', async (req, res) => {
   const matchKey = req.params.matchKey;
   const matchData = await fetchTeamData.fetchMatchDataTBA(matchKey);
   const unformattedTeams = matchData.alliances.red.team_keys.concat(matchData.alliances.blue.team_keys);
+  const teamNumber = req.params.teamNumber;
   const teams = [];
   unformattedTeams.forEach(element => {
     teams.push(element.substring(3));
   });
-  res.render('whiteboard', { matchKey, matchData ,teams});
+  res.render('whiteboard', { matchKey, matchData ,teams, teamNumber});
+});
+
+app.post('/save/whiteboard', async (req, res) => {
+  const { matchKey, teamNumber, gamePhase, data } = req.body;
+
+  const whiteboardData = new Whiteboard({
+    matchKey,
+    teamNumber,
+    gamePhase,
+    data
+  });
+
+  try {
+    await whiteboardData.save();
+    res.status(200).json({ message: 'Whiteboard data saved successfully' });
+  } catch (error) {
+    console.error('Error saving whiteboard data:', error);
+    res.status(500).json({ error: 'Error saving whiteboard data' });
+  }
+});
+
+app.get('/saved/whiteboard' , async (req, res) => {
+  const matchKey = req.query.matchKey;
+  const teamNumber = req.query.teamNumber;
+  const gamePhase = req.query.gamePhase;
+
+  console.log(`received request for matchKey: ${matchKey}, teamNumber: ${teamNumber}, gamePhase: ${gamePhase}`);
+  try {
+    const whiteboards = await Whiteboard.find({ matchKey, teamNumber, gamePhase });
+    res.status(200).json(whiteboards);
+  } catch (error) {
+    console.error('Error fetching saved whiteboard data:', error);
+    res.status(500).json({ error: 'Error fetching saved whiteboard data' });
+  }
 });
 
 app.listen(3000, () => {

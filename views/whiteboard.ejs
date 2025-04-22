@@ -262,11 +262,46 @@
     saveButton.addEventListener('click', () => {
       // whiteboard.save();
       console.log(strokes);
-      alert('not implemented yet!!');
+      // alert('not implemented yet!!');
+      fetch('/save/whiteboard', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        // body: JSON.stringify({ strokes })
+        body: JSON.stringify({
+          data: strokes,
+          matchKey: '<%=matchKey%>',
+          teamNumber: '<%=teamNumber%>',
+          gamePhase: 'autonomous',
+        })
+      })
     });
     loadButton.addEventListener('click', () => {
-      whiteboard.load();
-      alert('not implemented yet!!');
+
+      const matchKey = '<%=matchKey%>'; 
+      const teamNumber = '<%=teamNumber%>';
+      const gamePhase = 'autonomous';
+
+      const url = `/saved/whiteboard?matchKey=${matchKey}&teamNumber=${teamNumber}&gamePhase=${gamePhase}`;
+
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Data:', data);
+        strokes = data[0].data;
+
+        console.log('Strokes:', strokes);
+        redrawWhiteboard();
+      })
+      .catch(error => {
+        console.error('Error fetching whiteboard:', error); 
+      });
     });
     undoButton.addEventListener('click', () => {
       if (strokes.length > 0) {
