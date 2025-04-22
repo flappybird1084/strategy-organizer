@@ -107,12 +107,12 @@ app.get('/team/:team/', async (req, res) => {
     })).sort((a, b) => {
       const parseDate = (str) => {
         const [year, month, day] = str.split('-').map(Number);
-        return new Date(2000 + year, month - 1, day); 
+        return new Date(2000 + year, month - 1, day);
       };
-    
+
       return parseDate(a.end_date) - parseDate(b.end_date);
     });
-    
+
     const allMatchData = [];
 
     for (const eventCode of eventData.map(event => event.event_code)) {
@@ -125,7 +125,7 @@ app.get('/team/:team/', async (req, res) => {
         fancy_comp_level: fetchTeamData.getFancyQualName(match.comp_level),
         fancy_match_number: fetchTeamData.getFancyMatchNumber(match.comp_level, match.match_number, match.set_number),
         end_time: match.post_result_time,
-        
+
       })).sort((a, b) => {
         return a.end_time - b.end_time;
       }));
@@ -167,7 +167,7 @@ app.get('/whiteboard/:matchKey/:teamNumber/:gamePhase', async (req, res) => {
   unformattedTeams.forEach(element => {
     teams.push(element.substring(3));
   });
-  res.render('whiteboard', { matchKey, matchData ,teams, teamNumber, gamePhase});
+  res.render('whiteboard', { matchKey, matchData, teams, teamNumber, gamePhase });
 });
 
 app.post('/save/whiteboard', async (req, res) => {
@@ -191,7 +191,7 @@ app.post('/save/whiteboard', async (req, res) => {
   }
 });
 
-app.get('/saved/whiteboard' , async (req, res) => {
+app.get('/saved/whiteboard', async (req, res) => {
   const matchKey = req.query.matchKey;
   const teamNumber = req.query.teamNumber;
   const gamePhase = req.query.gamePhase;

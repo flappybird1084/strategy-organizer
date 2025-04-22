@@ -9,7 +9,7 @@
 
 import { set } from "mongoose";
 
-  
+
 //     async fetchAllEventsCurrentYearTBA(teamId, year = 2025) {
 //       const url = `localhost:3000/api/tba/team/${"frc" + teamId}/events/${year}/matches`;
 //       const response = await fetch(url);
@@ -17,7 +17,7 @@ import { set } from "mongoose";
 //       return data;
 //     }
 //   }
-  
+
 //   module.exports = TeamDataFetcher;
 // // export default TeamDataFetcher;
 
@@ -34,7 +34,7 @@ export class TeamDataFetcher {
       return data;
     } catch (error) {
       console.error(`Error fetching team data from Statbotics:`, error);
-      throw error;  
+      throw error;
     }
   }
 
@@ -49,13 +49,13 @@ export class TeamDataFetcher {
       return data;
     } catch (error) {
       console.error(`Error fetching events from TBA:`, error);
-      throw error;  
+      throw error;
     }
   }
 
   async fetchAllEventCodesCurrentYear(teamId, year = 2025) {
     const eventCodes = [];
-    try{
+    try {
       const allEvents = await this.fetchAllEventsCurrentYearTBA(teamId, year);
       allEvents.forEach(event => {
         const eventCode = event.event_code;
@@ -63,9 +63,9 @@ export class TeamDataFetcher {
         eventCodes.push(eventCode);
       });
     }
-    catch (error){
+    catch (error) {
       console.error(`Error fetching events from TBA:`, error);
-      throw error;  
+      throw error;
     }
     return eventCodes;
   }
@@ -74,7 +74,7 @@ export class TeamDataFetcher {
 
   async fetchAllMatchesAtEventTBA(teamId, eventCode, year = 2025) {
     try {
-      const response = await fetch(`http://localhost:3000/api/tba/team/${"frc"+teamId}/event/${year+eventCode}/matches`);
+      const response = await fetch(`http://localhost:3000/api/tba/team/${"frc" + teamId}/event/${year + eventCode}/matches`);
       if (!response.ok) {
         throw new Error(`Failed to fetch matches for event ${eventCode}: ${response.statusText}`);
       }
@@ -82,21 +82,21 @@ export class TeamDataFetcher {
       return data;
     } catch (error) {
       console.error(`Error fetching matches for event ${eventCode}:`, error);
-      throw error;  
+      throw error;
     }
   }
 
   async fetchAllMatchKeysAtEventTBA(teamId, eventCode, year = 2025) {
-    try{
+    try {
       const response = await this.fetchAllMatchesAtEventTBA(teamId, eventCode, year);
       const matchKeys = [];
       for (const match of response) {
         matchKeys.push(match.key);
       }
       return matchKeys;
-    } catch(error){
+    } catch (error) {
       console.error(`Error fetching match keys for event ${eventCode}:`, error);
-      throw error;  
+      throw error;
     }
   }
 
@@ -110,12 +110,12 @@ export class TeamDataFetcher {
       return data;
     } catch (error) {
       console.error(`Error fetching matches for event ${eventCode}:`, error);
-      throw error;  
+      throw error;
     }
   }
 
   getFancyQualName(comp_level) {
-    switch(comp_level){
+    switch (comp_level) {
       case 'qm':
         return "Qualifying Match";
       case 'sf':
@@ -128,7 +128,7 @@ export class TeamDataFetcher {
   }
 
   getFancyMatchNumber(comp_level, match_number, set_number) {
-    switch(comp_level){
+    switch (comp_level) {
       case 'qm':
         return match_number;
       case 'sf':

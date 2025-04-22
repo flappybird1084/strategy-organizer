@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Whiteboard</title>
   <style>
     body {
-        display: flex;
+      display: flex;
       height: 100vh;
     }
 
@@ -22,7 +23,7 @@
       width: 180px;
       background-color: #f5f5f5;
       padding: 10px;
-      margin-left:-10px;
+      margin-left: -10px;
       margin-bottom: -20px;
       display: flex;
       flex-direction: column;
@@ -30,7 +31,7 @@
     }
 
     .draggable {
-      position:absolute;
+      position: absolute;
       cursor: grab;
       width: 10%;
       aspect-ratio: 1;
@@ -54,10 +55,12 @@
       width: 100%;
       height: auto;
       aspect-ratio: 2.07509881423;
-      background-size: contain; /* Or 'cover' as needed */
+      background-size: contain;
+      /* Or 'cover' as needed */
       background-repeat: no-repeat;
       background-position: center;
     }
+
     .color-swatch {
       width: 24px;
       height: 24px;
@@ -77,13 +80,14 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 4px;
     }
-
   </style>
 </head>
+
 <body>
 
   <div id="controls">
-    <a href="/match/<%=matchKey%>/<%=teamNumber%>" style="color:white; text-decoration: none;"><button id="back-button" style=" top: 10px; left: 10px; background-color: rgb(0, 119, 255); color:white;">⬅️ Back</a></button>
+    <a href="/match/<%=matchKey%>/<%=teamNumber%>" style="color:white; text-decoration: none;"><button id="back-button"
+        style=" top: 10px; left: 10px; background-color: rgb(0, 119, 255); color:white;">⬅️ Back</a></button>
     <button id="clear-button">🧹 Clear</button>
     <button id="save-button">💾 Save</button>
     <button id="load-button">📂 Load</button>
@@ -93,7 +97,8 @@
 
 
     <div style="position: relative;">
-      <div id="color-popup" style="display: none; position: absolute; top: 40px; left: 0; background: white; border: 1px solid #ccc; padding: 5px; z-index: 1000;">
+      <div id="color-popup"
+        style="display: none; position: absolute; top: 40px; left: 0; background: white; border: 1px solid #ccc; padding: 5px; z-index: 1000;">
         <div class="color-grid">
           <div class="color-swatch selected" style="background: black;" data-color="#000000"></div>
           <div class="color-swatch" style="background: red;" data-color="#ff0000"></div>
@@ -111,30 +116,42 @@
     <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/autonomous" class="btn-link">
       <button id="autonomous-button" style="background: rgb(255, 131, 131);"">🤖 Autonomous</button>
     </a>
-    <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/teleoperated" class="btn-link">
-      <button id="teleop-button" style="background: rgb(107, 255, 198);"">🚀 Teleoperated</button>
+    <a href=" /whiteboard/<%=matchKey %>/<%= teamNumber %>/teleoperated" class="btn-link">
+          <button id="teleop-button" style="background: rgb(107, 255, 198);"">🚀 Teleoperated</button>
     </a>
-    <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/endgame" class="btn-link">
-      <button id="endgame-button" style="background: rgb(154, 99, 255);"">🏁 Endgame</button>
+    <a href=" /whiteboard/<%=matchKey %>/<%= teamNumber %>/endgame" class="btn-link">
+              <button id="endgame-button" style="background: rgb(154, 99, 255);"">🏁 Endgame</button>
     </a>
   </div>
 
-    <div id="whiteboard-container">
-      <canvas id="whiteboard"></canvas>
-      <div class="draggable" draggable="true" style="top: 25%; left: 36%; background-color: red;"><%=teams[0]%></div> 
-      <div class="draggable" draggable="true" style="top: 45%; left: 36%; background-color: orange;"><%=teams[1]%></div> 
-      <div class="draggable" draggable="true" style="top: 65%; left: 36%; background-color: yellow;"><%=teams[2]%></div> 
-      <div class="draggable" draggable="true" style="top: 25%; left: 57%; background-color: green;"><%=teams[3]%></div> 
-      <div class="draggable" draggable="true" style="top: 45%; left: 57%; background-color: blue;"><%=teams[4]%></div> 
-      <div class="draggable" draggable="true" style="top: 65%; left: 57%; background-color: purple;"><%=teams[5]%></div> 
-    </div>  
+    <div id=" whiteboard-container">
+                <canvas id="whiteboard"></canvas>
+                <div class="draggable" draggable="true" style="top: 25%; left: 36%; background-color: red;">
+                  <%=teams[0]%>
+                </div>
+                <div class="draggable" draggable="true" style="top: 45%; left: 36%; background-color: orange;">
+                  <%=teams[1]%>
+                </div>
+                <div class="draggable" draggable="true" style="top: 65%; left: 36%; background-color: yellow;">
+                  <%=teams[2]%>
+                </div>
+                <div class="draggable" draggable="true" style="top: 25%; left: 57%; background-color: green;">
+                  <%=teams[3]%>
+                </div>
+                <div class="draggable" draggable="true" style="top: 45%; left: 57%; background-color: blue;">
+                  <%=teams[4]%>
+                </div>
+                <div class="draggable" draggable="true" style="top: 65%; left: 57%; background-color: purple;">
+                  <%=teams[5]%>
+                </div>
+  </div>
 
   <script>
     let strokes = [];
     let currentStroke = [];
     let redoStack = [];
     const whiteboard = document.getElementById('whiteboard');
-    
+
     const ctx = whiteboard.getContext('2d');
     whiteboard.style.backgroundImage = 'url(/images/reefscape-bg-2.png)';
 
@@ -178,7 +195,7 @@
 
     whiteboard.addEventListener('mouseout', () => {
       drawing = false;
-        console.log('mouseout');
+      console.log('mouseout');
     });
 
     whiteboard.addEventListener('mousemove', (e) => {
@@ -218,7 +235,7 @@
       }
     }
 
-    
+
 
     window.addEventListener('resize', () => {
       whiteboard.width = window.innerWidth;
@@ -302,7 +319,7 @@
     });
     loadButton.addEventListener('click', () => {
 
-      const matchKey = '<%=matchKey%>'; 
+      const matchKey = '<%=matchKey%>';
       const teamNumber = '<%=teamNumber%>';
       const gamePhase = '<%=gamePhase%>';
 
@@ -314,17 +331,17 @@
           'Content-Type': 'application/json'
         }
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Data:', data);
-        strokes = data[0].data;
+        .then(response => response.json())
+        .then(data => {
+          console.log('Data:', data);
+          strokes = data[0].data;
 
-        console.log('Strokes:', strokes);
-        redrawWhiteboard();
-      })
-      .catch(error => {
-        console.error('Error fetching whiteboard:', error); 
-      });
+          console.log('Strokes:', strokes);
+          redrawWhiteboard();
+        })
+        .catch(error => {
+          console.error('Error fetching whiteboard:', error);
+        });
     });
     undoButton.addEventListener('click', () => {
       if (strokes.length > 0) {
@@ -343,5 +360,5 @@
   </script>
 
 </body>
-</html>
 
+</html>
