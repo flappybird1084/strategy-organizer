@@ -5,8 +5,47 @@
 <body>
     <h3>Main Page</h3>
     <p>Enter Team Number</p>
-    <form action="/redirect/team" method="get">
-        <input type="text" name="team">
-        <button type="submit">Submit</button>
-    </form>
+    <div id="form-container">
+        <form action="/redirect/team" method="get">
+            <input type="text" name="team" placeholder="Numbers only!">
+            <button id="submitBtn" type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const previousNotices = formContainer.querySelectorAll('.api-notice');
+            previousNotices.forEach(notice => notice.remove());
+        });
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const teamInput = document.querySelector('input[name="team"]');
+            const teamNumber = teamInput.value.trim();
+            if (teamNumber === '') {
+                alert('Please enter a team number.');
+                event.preventDefault(); // Prevent form submission
+            } else if (!/^[0-9]+$/.test(teamNumber)) {
+                alert('Please enter a valid team number (numbers only).');
+                event.preventDefault(); // Prevent form submission
+            }
+            else{
+                const formContainer = document.getElementById('form-container');
+
+                const previousNotices = formContainer.querySelectorAll('.api-notice');
+                previousNotices.forEach(notice => notice.remove());
+
+                const newDiv = document.createElement('div');
+                newDiv.className = 'api-notice';
+                newDiv.innerHTML = "Note: The Blue Alliance's API experiences variable demand. Please wait a moment for the page to load.";
+
+                newDiv.style.border = "1px solid #f5c2c7";         
+                newDiv.style.backgroundColor = "#f8d7da";          
+                newDiv.style.padding = "10px";
+                newDiv.style.borderRadius = "4px";
+                newDiv.style.marginTop = "10px";
+                newDiv.style.color = "#842029";  
+
+                formContainer.appendChild(newDiv);
+            }
+        });
+    </script>
 </body>

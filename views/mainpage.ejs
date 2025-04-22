@@ -4,10 +4,12 @@
 </head>
 <body>
   <h1>Welcome to the Main Page for Team <%=team%></h1>
+  <a href="/">Back to Team Search</a>
+
   <h2>event codes</h2>
 
   <ul>
-      <% eventCodesWithNames.forEach(event => { %>
+      <% eventData.forEach(event => { %>
         <li>
             <%=event.name%> (<%=event.event_code%>)
             <ol>

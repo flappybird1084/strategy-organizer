@@ -89,14 +89,14 @@ app.get('/team/:team/', async (req, res) => {
   try {
     const allEvents = await fetchTeamData.fetchAllEventsCurrentYearTBA(team);
 
-    const eventCodesWithNames = allEvents.map(event => ({
+    const eventData = allEvents.map(event => ({
       event_code: event.event_code,
       name: event.name
     }));
     
     const allMatchData = [];
 
-    for (const eventCode of eventCodesWithNames.map(event => event.event_code)) {
+    for (const eventCode of eventData.map(event => event.event_code)) {
       const matchData = await fetchTeamData.fetchAllMatchesAtEventTBA(team, eventCode);
       allMatchData.push(matchData.map(match => ({
         key: match.key,
@@ -108,9 +108,9 @@ app.get('/team/:team/', async (req, res) => {
         
       })));
     }
-    console.log(eventCodesWithNames)
+    // console.log(eventData)
 
-    res.render('mainpage', { team, eventCodesWithNames, allMatchData });
+    res.render('mainpage', { team, eventData, allMatchData });
   } catch (error) {
     console.error(`Error fetching data for team ${team}:`, error);
     res.status(404).send(`Team ${team} not found <br> <a href="/">Go back</a>`);
