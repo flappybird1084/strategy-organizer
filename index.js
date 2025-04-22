@@ -144,8 +144,9 @@ app.get('/dev/whiteboard/', async (req, res) => {
   res.render("whiteboard", { teams });
 });
 
-app.get('/whiteboard/:matchKey/:teamNumber', async (req, res) => {
+app.get('/whiteboard/:matchKey/:teamNumber/:gamePhase', async (req, res) => {
   const matchKey = req.params.matchKey;
+  const gamePhase = req.params.gamePhase;
   const matchData = await fetchTeamData.fetchMatchDataTBA(matchKey);
   const unformattedTeams = matchData.alliances.red.team_keys.concat(matchData.alliances.blue.team_keys);
   const teamNumber = req.params.teamNumber;
@@ -153,7 +154,7 @@ app.get('/whiteboard/:matchKey/:teamNumber', async (req, res) => {
   unformattedTeams.forEach(element => {
     teams.push(element.substring(3));
   });
-  res.render('whiteboard', { matchKey, matchData ,teams, teamNumber});
+  res.render('whiteboard', { matchKey, matchData ,teams, teamNumber, gamePhase});
 });
 
 app.post('/save/whiteboard', async (req, res) => {
@@ -167,6 +168,8 @@ app.post('/save/whiteboard', async (req, res) => {
   });
 
   try {
+    await Whiteboard.deleteMany({ matchKey, teamNumber, gamePhase });
+    //delete existing whiteboard saves because i'm too lazy to even try making multiple saves
     await whiteboardData.save();
     res.status(200).json({ message: 'Whiteboard data saved successfully' });
   } catch (error) {
@@ -187,6 +190,18 @@ app.get('/saved/whiteboard' , async (req, res) => {
   } catch (error) {
     console.error('Error fetching saved whiteboard data:', error);
     res.status(500).json({ error: 'Error fetching saved whiteboard data' });
+  }
+});
+
+app.delete('/delete/whiteboard', async (req, res) => {
+  const { matchKey, teamNumber, gamePhase } = req.body;
+
+  try {
+    await Whiteboard.deleteMany({ matchKey, teamNumber, gamePhase });
+    res.status(200).json({ message: 'Whiteboard data deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting whiteboard data:', error);
+    res.status(500).json({ error: 'Error deleting whiteboard data' });
   }
 });
 
