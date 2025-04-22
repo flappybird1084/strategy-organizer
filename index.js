@@ -115,7 +115,7 @@ app.get('/team/:team/', async (req, res) => {
     res.render('mainpage', { team, eventData, allMatchData });
   } catch (error) {
     console.error(`Error fetching data for team ${team}:`, error);
-    res.status(404).send(`Team ${team} not found <br> <a href="/">Go back</a>`);
+    res.status(404).send(`Error 404<br>Team ${team} not found <br> <a href="/">Go back</a>`);
   }
 });
 
