@@ -22,10 +22,10 @@
             const teamNumber = teamInput.value.trim();
             if (teamNumber === '') {
                 alert('Please enter a team number.');
-                event.preventDefault(); // Prevent form submission
+                event.preventDefault(); 
             } else if (!/^[0-9]+$/.test(teamNumber)) {
                 alert('Please enter a valid team number (numbers only).');
-                event.preventDefault(); // Prevent form submission
+                event.preventDefault(); 
             }
             else{
                 const formContainer = document.getElementById('form-container');

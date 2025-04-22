@@ -34,7 +34,7 @@ export class TeamDataFetcher {
       return data;
     } catch (error) {
       console.error(`Error fetching team data from Statbotics:`, error);
-      throw error; // rethrow the error if you want to handle it further up the call stack
+      throw error;  
     }
   }
 
@@ -49,7 +49,7 @@ export class TeamDataFetcher {
       return data;
     } catch (error) {
       console.error(`Error fetching events from TBA:`, error);
-      throw error; // rethrow the error if you want to handle it further up the call stack
+      throw error;  
     }
   }
 
@@ -65,7 +65,7 @@ export class TeamDataFetcher {
     }
     catch (error){
       console.error(`Error fetching events from TBA:`, error);
-      throw error; // rethrow the error if you want to handle it further up the call stack
+      throw error;  
     }
     return eventCodes;
   }
@@ -82,7 +82,7 @@ export class TeamDataFetcher {
       return data;
     } catch (error) {
       console.error(`Error fetching matches for event ${eventCode}:`, error);
-      throw error; // rethrow the error if you want to handle it further up the call stack
+      throw error;  
     }
   }
 
@@ -96,7 +96,7 @@ export class TeamDataFetcher {
       return matchKeys;
     } catch(error){
       console.error(`Error fetching match keys for event ${eventCode}:`, error);
-      throw error; // rethrow the error if you want to handle it further up the call stack
+      throw error;  
     }
   }
 
@@ -110,7 +110,7 @@ export class TeamDataFetcher {
       return data;
     } catch (error) {
       console.error(`Error fetching matches for event ${eventCode}:`, error);
-      throw error; // rethrow the error if you want to handle it further up the call stack
+      throw error;  
     }
   }
 

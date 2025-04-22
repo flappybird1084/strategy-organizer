@@ -107,7 +107,7 @@ app.get('/team/:team/', async (req, res) => {
     })).sort((a, b) => {
       const parseDate = (str) => {
         const [year, month, day] = str.split('-').map(Number);
-        return new Date(2000 + year, month - 1, day); // Add 2000 to get full year
+        return new Date(2000 + year, month - 1, day); 
       };
     
       return parseDate(a.end_date) - parseDate(b.end_date);
@@ -196,7 +196,7 @@ app.get('/saved/whiteboard' , async (req, res) => {
   const teamNumber = req.query.teamNumber;
   const gamePhase = req.query.gamePhase;
 
-  console.log(`received request for matchKey: ${matchKey}, teamNumber: ${teamNumber}, gamePhase: ${gamePhase}`);
+  // console.log(`received request for matchKey: ${matchKey}, teamNumber: ${teamNumber}, gamePhase: ${gamePhase}`);
   try {
     const whiteboards = await Whiteboard.find({ matchKey, teamNumber, gamePhase });
     res.status(200).json(whiteboards);

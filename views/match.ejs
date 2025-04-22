@@ -20,7 +20,6 @@
     <div id="teams-container">
         <table>
             <tr>
-                <!-- Red Teams -->
                 <% matchData.alliances.red.team_keys.forEach((key, i) => { %>
                     <td class="team red" style="vertical-align: top;">
                         <h4 style="color:black">Red <%=i + 1%></h4>
@@ -29,7 +28,6 @@
                 <% }); %>
             </tr>
             <tr>
-                <!-- Blue Teams -->
                 <% matchData.alliances.blue.team_keys.forEach((key, i) => { %>
                     <td class="team blue" style="vertical-align: top;">
                         <h4 style="color:black">Blue <%=i + 1%></h4>
