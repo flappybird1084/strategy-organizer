@@ -164,6 +164,7 @@
   </div>
 
   <script>
+    let draggablePositions = [];
     let strokes = [];
     let currentStroke = [];
     let redoStack = [];
@@ -271,7 +272,7 @@
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
         draggable.classList.add('dragging');
-        // console.log('mousedown on draggable', e.clientX, e.clientY);
+        console.log('mousedown on draggable', e.clientX, e.clientY);
       });
 
       draggable.addEventListener('dragstart', (e) => {
@@ -318,7 +319,18 @@
       clearWhiteboard();
     });
     saveButton.addEventListener('click', () => {
-      // whiteboard.save();
+      const whiteboardRect = whiteboard.getBoundingClientRect();
+      document.querySelectorAll('.draggable').forEach(draggable => {
+        const rect = draggable.getBoundingClientRect();
+        const position = {
+          left: ((rect.left - whiteboardRect.left) / whiteboardRect.width) * 100,
+          top: ((rect.top - whiteboardRect.top) / whiteboardRect.height) * 100
+        };
+        draggablePositions.push(position);
+      });
+
+      console.log("drag pos", draggablePositions)
+
       console.log(strokes);
       // alert('not implemented yet!!');
       fetch('/save/whiteboard', {
@@ -328,7 +340,7 @@
         },
         // body: JSON.stringify({ strokes })
         body: JSON.stringify({
-          data: strokes,
+          data: {strokes: strokes, draggablePositions: draggablePositions},
           matchKey: '<%=matchKey%>',
           teamNumber: '<%=teamNumber%>',
           gamePhase: '<%=gamePhase%>',
@@ -352,15 +364,34 @@
         .then(response => response.json())
         .then(data => {
           console.log('Data:', data);
-          strokes = data[0].data;
+          strokes = data[0].data.strokes;
+          draggablePositions = data[0].data.draggablePositions;
+          updateDraggablePositions();
 
           console.log('Strokes:', strokes);
+          console.log('Draggable Positions:', draggablePositions);
           redrawWhiteboard();
         })
         .catch(error => {
           console.error('Error fetching whiteboard:', error);
         });
     });
+
+    updateDraggablePositions = () => {
+      const whiteboardContainer = document.getElementById('whiteboard-container');
+
+      document.querySelectorAll('.draggable').forEach((draggable, index) => {
+        // console.log("new object: ", draggablePositions[index]);
+        // const newDraggableHTML = draggablePositions[index];
+        // whiteboardContainer.innerHTML += newDraggableHTML;
+        // console.log("new draggable html", newDraggableHTML)
+
+        const newDraggablePosition = draggablePositions[index];
+        draggable.style.left = `${newDraggablePosition.left}%`;
+        draggable.style.top = `${newDraggablePosition.top}%`;
+      });
+  
+    };
     undoButton.addEventListener('click', () => {
       if (strokes.length > 0) {
         const undone = strokes.pop();
