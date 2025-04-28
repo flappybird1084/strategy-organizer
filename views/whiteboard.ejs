@@ -373,6 +373,16 @@
       //   whiteboard.height = window.innerHeight;
       // });
 
+      function showNotification(message, isError = false) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.style.backgroundColor = isError ? '#f44336' : '#4caf50';
+        notification.style.display = 'block';
+        setTimeout(() => {
+          notification.style.display = 'none';
+        }, 3000);
+      }
+
       whiteboard.width = 1200;
       whiteboard.height = 600;
 
