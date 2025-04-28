@@ -47,12 +47,12 @@
       justify-content: center;
       align-items: center;
       position: relative;
-      overflow: hidden;
+      overflow:clip;
       text-align: center;
-      /* max-width: 80%; */
-      /* max-height: auto; */
-      width: 80%;
-      height: auto;
+      max-width: 80%;
+      max-height: 80%;
+      /* width: 80%; */
+      /* height: auto; */
       aspect-ratio: 2.07509881423;
     }
 
@@ -64,6 +64,7 @@
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
+
     }
 
     .color-swatch {
@@ -136,26 +137,30 @@
     </a>
   </div>
 
-    <div id=" whiteboard-container">
-      <h1 id="game-phase-indicator">Currently in <%= gamePhase.charAt(0).toUpperCase() + gamePhase.slice(1) %></h1>                <canvas id="whiteboard"></canvas>
-                <div class="draggable" draggable="true" style="top: 25%; left: 36%; background-color: red;">
-                  <%=teams[0]%>
-                </div>
-                <div class="draggable" draggable="true" style="top: 45%; left: 36%; background-color: orange;">
-                  <%=teams[1]%>
-                </div>
-                <div class="draggable" draggable="true" style="top: 65%; left: 36%; background-color: yellow;">
-                  <%=teams[2]%>
-                </div>
-                <div class="draggable" draggable="true" style="top: 25%; left: 57%; background-color: green;">
-                  <%=teams[3]%>
-                </div>
-                <div class="draggable" draggable="true" style="top: 45%; left: 57%; background-color: blue;">
-                  <%=teams[4]%>
-                </div>
-                <div class="draggable" draggable="true" style="top: 65%; left: 57%; background-color: purple;">
-                  <%=teams[5]%>
-                </div>
+    <div id="whiteboard-container">
+      <h1 id="game-phase-indicator">Currently in <%= gamePhase.charAt(0).toUpperCase() + gamePhase.slice(1) %></h1>               
+      <canvas id="whiteboard">
+     
+      </canvas>
+         <div class="draggable" draggable="true" style="top: 25%; left: 36%; background-color: red;">
+          <%=teams[0]%>
+        </div>
+        <div class="draggable" draggable="true" style="top: 45%; left: 36%; background-color: orange;">
+          <%=teams[1]%>
+        </div>
+        <div class="draggable" draggable="true" style="top: 65%; left: 36%; background-color: yellow;">
+          <%=teams[2]%>
+        </div>
+        <div class="draggable" draggable="true" style="top: 25%; left: 57%; background-color: green;">
+          <%=teams[3]%>
+        </div>
+        <div class="draggable" draggable="true" style="top: 45%; left: 57%; background-color: blue;">
+          <%=teams[4]%>
+        </div>
+        <div class="draggable" draggable="true" style="top: 65%; left: 57%; background-color: purple;">
+          <%=teams[5]%>
+        </div>
+
   </div>
 
   <script>
@@ -266,6 +271,7 @@
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
         draggable.classList.add('dragging');
+        // console.log('mousedown on draggable', e.clientX, e.clientY);
       });
 
       draggable.addEventListener('dragstart', (e) => {

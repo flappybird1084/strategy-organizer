@@ -158,10 +158,7 @@ app.get('/redirect/team/', async (req, res) => {
   res.redirect(`/team/${team}`);
 });
 
-app.get('/dev/whiteboard/', async (req, res) => {
-  const teams = ["team1", "team2", "team3", "team4", "team5", "team6"];
-  res.render("whiteboard", { teams });
-});
+
 
 app.get('/whiteboard/:matchKey/:teamNumber/:gamePhase', async (req, res) => {
   const matchKey = req.params.matchKey;
