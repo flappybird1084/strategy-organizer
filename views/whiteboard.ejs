@@ -1,413 +1,515 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Whiteboard</title>
+    <style>
+      :root {
+        --controls-width: 180px;
+      }
 
-<head>
-  <title>Whiteboard</title>
-  <style>
-    :root{
-      --controls-width: 180px;
-    }
+      body {
+        display: flex;
+        height: 100vh;
+      }
 
-    body {
-      display: flex;
-      height: 100vh;
-    }
+      #controls {
+        width: var(--controls-width);
+        background-color: #f5f5f5;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        border-right: 1px solid #ccc;
+      }
 
-    #controls {
-      width: var(--controls-width);
-      background-color: #f5f5f5;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      border-right: 1px solid #ccc;
-    }
+      .btn-link {
+        width: 180px;
+        background-color: #f5f5f5;
+        padding: 10px;
+        margin-left: -10px;
+        margin-bottom: -20px;
+        display: flex;
+        flex-direction: column;
+        gap: 0px;
+      }
 
-    .btn-link {
-      width: 180px;
-      background-color: #f5f5f5;
-      padding: 10px;
-      margin-left: -10px;
-      margin-bottom: -20px;
-      display: flex;
-      flex-direction: column;
-      gap: 0px;
-    }
+      .draggable {
+        position: absolute;
+        cursor: grab;
+        width: 10%;
+        aspect-ratio: 1;
+      }
 
-    .draggable {
-      position: absolute;
-      cursor: grab;
-      width: 10%;
-      aspect-ratio: 1;
-    }
+      #whiteboard-container {
+        /* flex-grow: 1; */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: clip;
+        text-align: center;
+        max-width: 80%;
+        max-height: 80%;
+        /* width: 80%; */
+        /* height: auto; */
+        aspect-ratio: 2.07509881423;
+      }
 
-    #whiteboard-container {
-      /* flex-grow: 1; */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      overflow:clip;
-      text-align: center;
-      max-width: 80%;
-      max-height: 80%;
-      /* width: 80%; */
-      /* height: auto; */
-      aspect-ratio: 2.07509881423;
-    }
+      canvas#whiteboard {
+        margin-top: 50px;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 2.07509881423;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
 
-    canvas#whiteboard {
-      margin-top:50px;
-      width: 100%;
-      height: auto;
-      aspect-ratio: 2.07509881423;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
+      .color-swatch {
+        width: 24px;
+        height: 24px;
+        margin: 4px;
+        display: inline-block;
+        cursor: pointer;
+        border: 2px solid transparent;
+        box-sizing: border-box;
+      }
 
-    }
+      .color-swatch.selected {
+        box-shadow: 0 0 4px 2px #333;
+      }
 
-    .color-swatch {
-      width: 24px;
-      height: 24px;
-      margin: 4px;
-      display: inline-block;
-      cursor: pointer;
-      border: 2px solid transparent;
-      box-sizing: border-box;
-    }
+      .color-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+      }
+      #game-phase-indicator {
+        position: absolute;
+        top: 10px;
+        left: calc(var(--controls-width) + 70px);
+        color: black;
+      }
+    </style>
+  </head>
 
-    .color-swatch.selected {
-      box-shadow: 0 0 4px 2px #333;
-    }
+  <body>
+    <div id="controls">
+      <a
+        href="/match/<%=matchKey%>/<%=teamNumber%>"
+        style="color: white; text-decoration: none"
+      >
+        <button
+          id="back-button"
+          style="
+            top: 10px;
+            left: 10px;
+            background-color: rgb(0, 119, 255);
+            color: white;
+          "
+        >
+          ⬅️ Back
+        </button>
+      </a>
+      <button id="clear-button">🧹 Clear</button>
+      <button id="save-button">💾 Save</button>
+      <button id="load-button">📂 Load</button>
+      <button id="undo-button">↩️ Undo</button>
+      <button id="redo-button">↪️ Redo</button>
+      <button id="color-button">🎨 Color</button>
 
-    .color-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 4px;
-    }
-    #game-phase-indicator {
-      position:absolute;
-      top: 10px;
-      left: calc(var(--controls-width) + 70px);
-      color: black;
-
-    }
-  </style>
-</head>
-
-<body>
-
-  <div id="controls">
-    <a href="/match/<%=matchKey%>/<%=teamNumber%>" style="color:white; text-decoration: none;"><button id="back-button"
-        style=" top: 10px; left: 10px; background-color: rgb(0, 119, 255); color:white;">⬅️ Back</a></button>
-    <button id="clear-button">🧹 Clear</button>
-    <button id="save-button">💾 Save</button>
-    <button id="load-button">📂 Load</button>
-    <button id="undo-button">↩️ Undo</button>
-    <button id="redo-button">↪️ Redo</button>
-    <button id="color-button">🎨 Color</button>
-
-
-    <div style="position: relative;">
-      <div id="color-popup"
-        style="display: none; position: absolute; top: 40px; left: 0; background: white; border: 1px solid #ccc; padding: 5px; z-index: 1000;">
-        <div class="color-grid">
-          <div class="color-swatch selected" style="background: black;" data-color="#000000"></div>
-          <div class="color-swatch" style="background: red;" data-color="#ff0000"></div>
-          <div class="color-swatch" style="background: orange;" data-color="#ffa500"></div>
-          <div class="color-swatch" style="background: yellow;" data-color="#ffff00"></div>
-          <div class="color-swatch" style="background: green;" data-color="#008000"></div>
-          <div class="color-swatch" style="background: blue;" data-color="#0000ff"></div>
-          <div class="color-swatch" style="background: purple;" data-color="#800080"></div>
-          <div class="color-swatch" style="background: gray;" data-color="#808080"></div>
+      <div style="position: relative">
+        <div
+          id="color-popup"
+          style="
+            display: none;
+            position: absolute;
+            top: 40px;
+            left: 0;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 5px;
+            z-index: 1000;
+          "
+        >
+          <div class="color-grid">
+            <div
+              class="color-swatch selected"
+              style="background: black"
+              data-color="#000000"
+            ></div>
+            <div
+              class="color-swatch"
+              style="background: red"
+              data-color="#ff0000"
+            ></div>
+            <div
+              class="color-swatch"
+              style="background: orange"
+              data-color="#ffa500"
+            ></div>
+            <div
+              class="color-swatch"
+              style="background: yellow"
+              data-color="#ffff00"
+            ></div>
+            <div
+              class="color-swatch"
+              style="background: green"
+              data-color="#008000"
+            ></div>
+            <div
+              class="color-swatch"
+              style="background: blue"
+              data-color="#0000ff"
+            ></div>
+            <div
+              class="color-swatch"
+              style="background: purple"
+              data-color="#800080"
+            ></div>
+            <div
+              class="color-swatch"
+              style="background: gray"
+              data-color="#808080"
+            ></div>
+          </div>
         </div>
+      </div>
+
+      <br />
+      <br />
+      <br />
+      <a
+        href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/autonomous"
+        class="btn-link"
+      >
+        <button id="autonomous-button" style="background: rgb(255, 131, 131)">
+          🤖 Autonomous
+        </button>
+      </a>
+      <a
+        href=" /whiteboard/<%=matchKey %>/<%= teamNumber %>/teleoperated"
+        class="btn-link"
+      >
+        <button id="teleop-button" style="background: rgb(107, 255, 198)">
+          🚀 Teleoperated
+        </button>
+      </a>
+      <a
+        href=" /whiteboard/<%=matchKey %>/<%= teamNumber %>/endgame"
+        class="btn-link"
+      >
+        <button id="endgame-button" style="background: rgb(154, 99, 255)">
+          🏁 Endgame
+        </button>
+      </a>
+    </div>
+
+    <div id="whiteboard-container">
+      <h1 id="game-phase-indicator">
+        Currently in <%= gamePhase.charAt(0).toUpperCase() + gamePhase.slice(1)
+        %>
+      </h1>
+      <canvas id="whiteboard"></canvas>
+      <div
+        class="draggable"
+        draggable="true"
+        style="top: 25%; left: 36%; background-color: red"
+      >
+        <%=teams[0]%>
+      </div>
+      <div
+        class="draggable"
+        draggable="true"
+        style="top: 45%; left: 36%; background-color: orange"
+      >
+        <%=teams[1]%>
+      </div>
+      <div
+        class="draggable"
+        draggable="true"
+        style="top: 65%; left: 36%; background-color: yellow"
+      >
+        <%=teams[2]%>
+      </div>
+      <div
+        class="draggable"
+        draggable="true"
+        style="top: 25%; left: 57%; background-color: green"
+      >
+        <%=teams[3]%>
+      </div>
+      <div
+        class="draggable"
+        draggable="true"
+        style="top: 45%; left: 57%; background-color: blue"
+      >
+        <%=teams[4]%>
+      </div>
+      <div
+        class="draggable"
+        draggable="true"
+        style="top: 65%; left: 57%; background-color: purple"
+      >
+        <%=teams[5]%>
       </div>
     </div>
 
-    <br><br><br>
-    <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/autonomous" class="btn-link">
-      <button id="autonomous-button" style="background: rgb(255, 131, 131);"">🤖 Autonomous</button>
-    </a>
-    <a href=" /whiteboard/<%=matchKey %>/<%= teamNumber %>/teleoperated" class="btn-link">
-          <button id="teleop-button" style="background: rgb(107, 255, 198);"">🚀 Teleoperated</button>
-    </a>
-    <a href=" /whiteboard/<%=matchKey %>/<%= teamNumber %>/endgame" class="btn-link">
-              <button id="endgame-button" style="background: rgb(154, 99, 255);"">🏁 Endgame</button>
-    </a>
-  </div>
+    <script>
+      let draggablePositions = [];
+      let strokes = [];
+      let currentStroke = [];
+      let redoStack = [];
+      const whiteboard = document.getElementById('whiteboard');
 
-    <div id="whiteboard-container">
-      <h1 id="game-phase-indicator">Currently in <%= gamePhase.charAt(0).toUpperCase() + gamePhase.slice(1) %></h1>               
-      <canvas id="whiteboard">
-     
-      </canvas>
-         <div class="draggable" draggable="true" style="top: 25%; left: 36%; background-color: red;">
-          <%=teams[0]%>
-        </div>
-        <div class="draggable" draggable="true" style="top: 45%; left: 36%; background-color: orange;">
-          <%=teams[1]%>
-        </div>
-        <div class="draggable" draggable="true" style="top: 65%; left: 36%; background-color: yellow;">
-          <%=teams[2]%>
-        </div>
-        <div class="draggable" draggable="true" style="top: 25%; left: 57%; background-color: green;">
-          <%=teams[3]%>
-        </div>
-        <div class="draggable" draggable="true" style="top: 45%; left: 57%; background-color: blue;">
-          <%=teams[4]%>
-        </div>
-        <div class="draggable" draggable="true" style="top: 65%; left: 57%; background-color: purple;">
-          <%=teams[5]%>
-        </div>
+      const ctx = whiteboard.getContext('2d');
+      whiteboard.style.backgroundImage = 'url(/images/reefscape-bg-2.png)';
 
-  </div>
+      let drawing = false;
+      let lastX = 0;
+      let lastY = 0;
+      let brushSize = 5;
+      let brushColor = 'black';
+      const colorButton = document.getElementById('color-button');
+      const colorPopup = document.getElementById('color-popup');
 
-  <script>
-    let draggablePositions = [];
-    let strokes = [];
-    let currentStroke = [];
-    let redoStack = [];
-    const whiteboard = document.getElementById('whiteboard');
-
-    const ctx = whiteboard.getContext('2d');
-    whiteboard.style.backgroundImage = 'url(/images/reefscape-bg-2.png)';
-
-    let drawing = false;
-    let lastX = 0;
-    let lastY = 0;
-    let brushSize = 5;
-    let brushColor = 'black';
-    const colorButton = document.getElementById('color-button');
-    const colorPopup = document.getElementById('color-popup');
-
-    colorButton.addEventListener('click', () => {
-      colorPopup.style.display = colorPopup.style.display === 'none' ? 'block' : 'none';
-    });
-
-    document.querySelectorAll('.color-swatch').forEach(swatch => {
-      swatch.addEventListener('click', (e) => {
-        brushColor = e.target.getAttribute('data-color');
-        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
-        e.target.classList.add('selected');
-        colorPopup.style.display = 'none';
+      colorButton.addEventListener('click', () => {
+        colorPopup.style.display =
+          colorPopup.style.display === 'none' ? 'block' : 'none';
       });
-    });
 
-    whiteboard.addEventListener('mousedown', (e) => {
-      if (e.target.classList.contains('draggable')) return;
-      currentStroke = [];
-      drawing = true;
-      lastX = e.offsetX * whiteboard.width / whiteboard.clientWidth;
-      lastY = e.offsetY * whiteboard.height / whiteboard.clientHeight;
-      console.log('mousedown at', e.offsetX, e.offsetY);
-    });
+      document.querySelectorAll('.color-swatch').forEach(swatch => {
+        swatch.addEventListener('click', e => {
+          brushColor = e.target.getAttribute('data-color');
+          document
+            .querySelectorAll('.color-swatch')
+            .forEach(s => s.classList.remove('selected'));
+          e.target.classList.add('selected');
+          colorPopup.style.display = 'none';
+        });
+      });
 
-    whiteboard.addEventListener('mouseup', () => {
-      drawing = false;
-      if (currentStroke.length > 0) {
-        strokes.push(currentStroke);
-        redoStack = [];
-      }
-    });
+      whiteboard.addEventListener('mousedown', e => {
+        if (e.target.classList.contains('draggable')) return;
+        currentStroke = [];
+        drawing = true;
+        lastX = (e.offsetX * whiteboard.width) / whiteboard.clientWidth;
+        lastY = (e.offsetY * whiteboard.height) / whiteboard.clientHeight;
+        console.log('mousedown at', e.offsetX, e.offsetY);
+      });
 
-    whiteboard.addEventListener('mouseout', () => {
-      drawing = false;
-      console.log('mouseout');
-    });
+      whiteboard.addEventListener('mouseup', () => {
+        drawing = false;
+        if (currentStroke.length > 0) {
+          strokes.push(currentStroke);
+          redoStack = [];
+        }
+      });
 
-    whiteboard.addEventListener('mousemove', (e) => {
-      if (!drawing || e.target.classList.contains('draggable')) return;
+      whiteboard.addEventListener('mouseout', () => {
+        drawing = false;
+        console.log('mouseout');
+      });
 
-      const x = e.offsetX * whiteboard.width / whiteboard.clientWidth;
-      const y = e.offsetY * whiteboard.height / whiteboard.clientHeight;
+      whiteboard.addEventListener('mousemove', e => {
+        if (!drawing || e.target.classList.contains('draggable')) return;
 
-      ctx.beginPath();
-      ctx.lineWidth = brushSize;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = brushColor;
+        const x = (e.offsetX * whiteboard.width) / whiteboard.clientWidth;
+        const y = (e.offsetY * whiteboard.height) / whiteboard.clientHeight;
 
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(x, y);
-      ctx.stroke();
+        ctx.beginPath();
+        ctx.lineWidth = brushSize;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = brushColor;
 
-      currentStroke.push({ x, y, lastX, lastY, brushSize, brushColor });
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
 
-      lastX = x;
-      lastY = y;
-      console.log(`mousemove at ${x}, ${y}`);
-    });
+        currentStroke.push({ x, y, lastX, lastY, brushSize, brushColor });
 
-    function redrawWhiteboard() {
-      ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-      for (const stroke of strokes) {
-        for (const action of stroke) {
-          ctx.beginPath();
-          ctx.lineWidth = action.brushSize;
-          ctx.lineCap = 'round';
-          ctx.strokeStyle = action.brushColor;
-          ctx.moveTo(action.lastX, action.lastY);
-          ctx.lineTo(action.x, action.y);
-          ctx.stroke();
+        lastX = x;
+        lastY = y;
+        console.log(`mousemove at ${x}, ${y}`);
+      });
+
+      function redrawWhiteboard() {
+        ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+        for (const stroke of strokes) {
+          for (const action of stroke) {
+            ctx.beginPath();
+            ctx.lineWidth = action.brushSize;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = action.brushColor;
+            ctx.moveTo(action.lastX, action.lastY);
+            ctx.lineTo(action.x, action.y);
+            ctx.stroke();
+          }
         }
       }
-    }
 
+      window.addEventListener('resize', () => {
+        whiteboard.width = window.innerWidth;
+        whiteboard.height = window.innerHeight;
+      });
 
-
-    window.addEventListener('resize', () => {
       whiteboard.width = window.innerWidth;
       whiteboard.height = window.innerHeight;
-    });
 
-    whiteboard.width = window.innerWidth;
-    whiteboard.height = window.innerHeight;
+      const draggables = document.querySelectorAll('.draggable');
+      let offsetX, offsetY;
 
-    const draggables = document.querySelectorAll('.draggable');
-    let offsetX, offsetY;
-
-    draggables.forEach(draggable => {
-      draggable.addEventListener('mousedown', (e) => {
-        const rect = draggable.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
-        draggable.classList.add('dragging');
-        console.log('mousedown on draggable', e.clientX, e.clientY);
-      });
-
-      draggable.addEventListener('dragstart', (e) => {
-        e.preventDefault(); 
-        e.preventDefault();
-      });
-
-      document.addEventListener('mousemove', (e) => {
-        if (!draggable.classList.contains('dragging')) return;
-
-        const containerRect = document.getElementById('whiteboard-container').getBoundingClientRect();
-        const draggableWidth = draggable.offsetWidth;
-        const draggableHeight = draggable.offsetHeight;
-
-        let newLeft = e.clientX - offsetX;
-        let newTop = e.clientY - offsetY;
-
-        newLeft = Math.max(containerRect.left, Math.min(newLeft, containerRect.right - draggableWidth));
-        newTop = Math.max(containerRect.top, Math.min(newTop, containerRect.bottom - draggableHeight));
-
-        draggable.style.left = `${newLeft - containerRect.left}px`;
-        draggable.style.top = `${newTop - containerRect.top}px`;
-      });
-
-      document.addEventListener('mouseup', () => {
-        draggable.style.cursor = 'grab';
-        draggable.classList.remove('dragging');
-      });
-    });
-
-    function clearWhiteboard() {
-      ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-      strokes = [];
-      redoStack = [];
-    }
-
-    const clearButton = document.getElementById('clear-button');
-    const saveButton = document.getElementById('save-button');
-    const loadButton = document.getElementById('load-button');
-    const undoButton = document.getElementById('undo-button');
-    const redoButton = document.getElementById('redo-button');
-
-    clearButton.addEventListener('click', () => {
-      clearWhiteboard();
-    });
-    saveButton.addEventListener('click', () => {
-      const whiteboardRect = whiteboard.getBoundingClientRect();
-      document.querySelectorAll('.draggable').forEach(draggable => {
-        const rect = draggable.getBoundingClientRect();
-        const position = {
-          left: ((rect.left - whiteboardRect.left) / whiteboardRect.width) * 100,
-          top: ((rect.top - whiteboardRect.top) / whiteboardRect.height) * 100
-        };
-        draggablePositions.push(position);
-      });
-
-      console.log("drag pos", draggablePositions)
-
-      console.log(strokes);
-      // alert('not implemented yet!!');
-      fetch('/save/whiteboard', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        // body: JSON.stringify({ strokes })
-        body: JSON.stringify({
-          data: {strokes: strokes, draggablePositions: draggablePositions},
-          matchKey: '<%=matchKey%>',
-          teamNumber: '<%=teamNumber%>',
-          gamePhase: '<%=gamePhase%>',
-        })
-      })
-    });
-    loadButton.addEventListener('click', () => {
-
-      const matchKey = '<%=matchKey%>';
-      const teamNumber = '<%=teamNumber%>';
-      const gamePhase = '<%=gamePhase%>';
-
-      const url = `/saved/whiteboard?matchKey=${matchKey}&teamNumber=${teamNumber}&gamePhase=${gamePhase}`;
-
-      fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Data:', data);
-          strokes = data[0].data.strokes;
-          draggablePositions = data[0].data.draggablePositions;
-          updateDraggablePositions();
-
-          console.log('Strokes:', strokes);
-          console.log('Draggable Positions:', draggablePositions);
-          redrawWhiteboard();
-        })
-        .catch(error => {
-          console.error('Error fetching whiteboard:', error);
+      draggables.forEach(draggable => {
+        draggable.addEventListener('mousedown', e => {
+          const rect = draggable.getBoundingClientRect();
+          offsetX = e.clientX - rect.left;
+          offsetY = e.clientY - rect.top;
+          draggable.classList.add('dragging');
+          console.log('mousedown on draggable', e.clientX, e.clientY);
         });
-    });
 
-    updateDraggablePositions = () => {
-      const whiteboardContainer = document.getElementById('whiteboard-container');
+        draggable.addEventListener('dragstart', e => {
+          e.preventDefault();
+          e.preventDefault();
+        });
 
-      document.querySelectorAll('.draggable').forEach((draggable, index) => {
-        // console.log("new object: ", draggablePositions[index]);
-        // const newDraggableHTML = draggablePositions[index];
-        // whiteboardContainer.innerHTML += newDraggableHTML;
-        // console.log("new draggable html", newDraggableHTML)
+        document.addEventListener('mousemove', e => {
+          if (!draggable.classList.contains('dragging')) return;
 
-        const newDraggablePosition = draggablePositions[index];
-        draggable.style.left = `${newDraggablePosition.left}%`;
-        draggable.style.top = `${newDraggablePosition.top}%`;
+          const containerRect = document
+            .getElementById('whiteboard-container')
+            .getBoundingClientRect();
+          const draggableWidth = draggable.offsetWidth;
+          const draggableHeight = draggable.offsetHeight;
+
+          let newLeft = e.clientX - offsetX;
+          let newTop = e.clientY - offsetY;
+
+          newLeft = Math.max(
+            containerRect.left,
+            Math.min(newLeft, containerRect.right - draggableWidth)
+          );
+          newTop = Math.max(
+            containerRect.top,
+            Math.min(newTop, containerRect.bottom - draggableHeight)
+          );
+
+          draggable.style.left = `${newLeft - containerRect.left}px`;
+          draggable.style.top = `${newTop - containerRect.top}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+          draggable.style.cursor = 'grab';
+          draggable.classList.remove('dragging');
+        });
       });
-  
-    };
-    undoButton.addEventListener('click', () => {
-      if (strokes.length > 0) {
-        const undone = strokes.pop();
-        redoStack.push(undone);
-        redrawWhiteboard();
-      }
-    });
-    redoButton.addEventListener('click', () => {
-      if (redoStack.length > 0) {
-        const redone = redoStack.pop();
-        strokes.push(redone);
-        redrawWhiteboard();
-      }
-    });
-  </script>
 
-</body>
+      function clearWhiteboard() {
+        ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+        strokes = [];
+        redoStack = [];
+      }
 
+      const clearButton = document.getElementById('clear-button');
+      const saveButton = document.getElementById('save-button');
+      const loadButton = document.getElementById('load-button');
+      const undoButton = document.getElementById('undo-button');
+      const redoButton = document.getElementById('redo-button');
+
+      clearButton.addEventListener('click', () => {
+        clearWhiteboard();
+      });
+      saveButton.addEventListener('click', () => {
+        const whiteboardRect = whiteboard.getBoundingClientRect();
+        document.querySelectorAll('.draggable').forEach(draggable => {
+          const rect = draggable.getBoundingClientRect();
+          const position = {
+            left:
+              ((rect.left - whiteboardRect.left) / whiteboardRect.width) * 100,
+            top:
+              ((rect.top - whiteboardRect.top) / whiteboardRect.height) * 100,
+          };
+          draggablePositions.push(position);
+        });
+
+        console.log('drag pos', draggablePositions);
+
+        console.log(strokes);
+        // alert('not implemented yet!!');
+        fetch('/save/whiteboard', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // body: JSON.stringify({ strokes })
+          body: JSON.stringify({
+            data: { strokes: strokes, draggablePositions: draggablePositions },
+            matchKey: '<%=matchKey%>',
+            teamNumber: '<%=teamNumber%>',
+            gamePhase: '<%=gamePhase%>',
+          }),
+        });
+      });
+      loadButton.addEventListener('click', () => {
+        const matchKey = '<%=matchKey%>';
+        const teamNumber = '<%=teamNumber%>';
+        const gamePhase = '<%=gamePhase%>';
+
+        const url = `/saved/whiteboard?matchKey=${matchKey}&teamNumber=${teamNumber}&gamePhase=${gamePhase}`;
+
+        fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Data:', data);
+            strokes = data[0].data.strokes;
+            draggablePositions = data[0].data.draggablePositions;
+            updateDraggablePositions();
+
+            console.log('Strokes:', strokes);
+            console.log('Draggable Positions:', draggablePositions);
+            redrawWhiteboard();
+          })
+          .catch(error => {
+            console.error('Error fetching whiteboard:', error);
+          });
+      });
+
+      updateDraggablePositions = () => {
+        const whiteboardContainer = document.getElementById(
+          'whiteboard-container'
+        );
+
+        document.querySelectorAll('.draggable').forEach((draggable, index) => {
+          // console.log("new object: ", draggablePositions[index]);
+          // const newDraggableHTML = draggablePositions[index];
+          // whiteboardContainer.innerHTML += newDraggableHTML;
+          // console.log("new draggable html", newDraggableHTML)
+
+          const newDraggablePosition = draggablePositions[index];
+          draggable.style.left = `${newDraggablePosition.left}%`;
+          draggable.style.top = `${newDraggablePosition.top}%`;
+        });
+      };
+      undoButton.addEventListener('click', () => {
+        if (strokes.length > 0) {
+          const undone = strokes.pop();
+          redoStack.push(undone);
+          redrawWhiteboard();
+        }
+      });
+      redoButton.addEventListener('click', () => {
+        if (redoStack.length > 0) {
+          const redone = redoStack.pop();
+          strokes.push(redone);
+          redrawWhiteboard();
+        }
+      });
+    </script>
+  </body>
 </html>
