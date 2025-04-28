@@ -1,4 +1,3 @@
-
 // class TeamDataFetcher {
 //     async fetchTeamDataStatbotics(teamId) {
 //       const url = `localhost:3000/api/statbotics/team/${teamId}`;
@@ -7,8 +6,7 @@
 //       return data;
 //     }
 
-import { set } from "mongoose";
-
+import { set } from 'mongoose';
 
 //     async fetchAllEventsCurrentYearTBA(teamId, year = 2025) {
 //       const url = `localhost:3000/api/tba/team/${"frc" + teamId}/events/${year}/matches`;
@@ -21,14 +19,15 @@ import { set } from "mongoose";
 //   module.exports = TeamDataFetcher;
 // // export default TeamDataFetcher;
 
-
 export class TeamDataFetcher {
   async fetchTeamDataStatbotics(teamId) {
     try {
       const url = `http://localhost:3000/api/statbotics/team/${teamId}`;
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error(`Failed to fetch team data from Statbotics for team ${teamId}: ${response.statusText}`);
+        throw new Error(
+          `Failed to fetch team data from Statbotics for team ${teamId}: ${response.statusText}`
+        );
       }
       const data = await response.json();
       return data;
@@ -40,10 +39,12 @@ export class TeamDataFetcher {
 
   async fetchAllEventsCurrentYearTBA(teamId, year = 2025) {
     try {
-      const url = `http://localhost:3000/api/tba/team/${"frc" + teamId}/events/${year}`;
+      const url = `http://localhost:3000/api/tba/team/${'frc' + teamId}/events/${year}`;
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error(`Failed to fetch events from TBA for team ${teamId} in year ${year}: ${response.statusText}`);
+        throw new Error(
+          `Failed to fetch events from TBA for team ${teamId} in year ${year}: ${response.statusText}`
+        );
       }
       const data = await response.json();
       return data;
@@ -62,21 +63,22 @@ export class TeamDataFetcher {
         // console.log(eventName);
         eventCodes.push(eventCode);
       });
-    }
-    catch (error) {
+    } catch (error) {
       console.error(`Error fetching events from TBA:`, error);
       throw error;
     }
     return eventCodes;
   }
 
-
-
   async fetchAllMatchesAtEventTBA(teamId, eventCode, year = 2025) {
     try {
-      const response = await fetch(`http://localhost:3000/api/tba/team/${"frc" + teamId}/event/${year + eventCode}/matches`);
+      const response = await fetch(
+        `http://localhost:3000/api/tba/team/${'frc' + teamId}/event/${year + eventCode}/matches`
+      );
       if (!response.ok) {
-        throw new Error(`Failed to fetch matches for event ${eventCode}: ${response.statusText}`);
+        throw new Error(
+          `Failed to fetch matches for event ${eventCode}: ${response.statusText}`
+        );
       }
       const data = await response.json();
       return data;
@@ -88,7 +90,11 @@ export class TeamDataFetcher {
 
   async fetchAllMatchKeysAtEventTBA(teamId, eventCode, year = 2025) {
     try {
-      const response = await this.fetchAllMatchesAtEventTBA(teamId, eventCode, year);
+      const response = await this.fetchAllMatchesAtEventTBA(
+        teamId,
+        eventCode,
+        year
+      );
       const matchKeys = [];
       for (const match of response) {
         matchKeys.push(match.key);
@@ -102,9 +108,13 @@ export class TeamDataFetcher {
 
   async fetchMatchDataTBA(matchKey) {
     try {
-      const response = await fetch(`http://localhost:3000/api/tba/match/${matchKey}`);
+      const response = await fetch(
+        `http://localhost:3000/api/tba/match/${matchKey}`
+      );
       if (!response.ok) {
-        throw new Error(`Failed to fetch matches for event ${eventCode}: ${response.statusText}`);
+        throw new Error(
+          `Failed to fetch matches for event ${eventCode}: ${response.statusText}`
+        );
       }
       const data = await response.json();
       return data;
@@ -117,11 +127,11 @@ export class TeamDataFetcher {
   getFancyQualName(comp_level) {
     switch (comp_level) {
       case 'qm':
-        return "Qualifying Match";
+        return 'Qualifying Match';
       case 'sf':
-        return "Semifinal";
+        return 'Semifinal';
       case 'f':
-        return "Final";
+        return 'Final';
       default:
         return comp_level;
     }

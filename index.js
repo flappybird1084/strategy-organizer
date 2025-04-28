@@ -24,7 +24,8 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('public'));
 
-mongoose.connect(`mongodb://${mongoIP}:${mongoPort}/strategydb`, {})
+mongoose
+  .connect(`mongodb://${mongoIP}:${mongoPort}/strategydb`, {})
   .then(() => {
     console.log('Connected to MongoDB');
   })
@@ -32,18 +33,17 @@ mongoose.connect(`mongodb://${mongoIP}:${mongoPort}/strategydb`, {})
     console.error('MongoDB connection error:', err);
   });
 
-
 app.use('/api/tba', (req, res) => {
   const reroutePath = req.originalUrl.replace('/api/tba', '');
   const fetchUrl = `https://www.thebluealliance.com/api/v3${reroutePath}`;
   const headers = {
-    'Accept': 'application/json',
-    'X-TBA-Auth-Key': apiKey
+    Accept: 'application/json',
+    'X-TBA-Auth-Key': apiKey,
   };
 
   fetch(fetchUrl, {
     method: req.method,
-    headers: headers
+    headers: headers,
   })
     .then(response => response.json())
     .then(data => res.json(data))
@@ -57,43 +57,39 @@ app.use('/api/statbotics', (req, res) => {
   const reroutePath = req.originalUrl.replace('/api/statbotics', '');
   const fetchUrl = `https://api.statbotics.io/v3${reroutePath}`;
   const headers = {
-    'Accept': 'application/json',
+    Accept: 'application/json',
   };
   fetch(fetchUrl, {
     method: req.method,
-    headers: headers
+    headers: headers,
   })
     .then(response => response.json())
     .then(data => res.json(data))
     .catch(error => {
       console.error('Error fetching data:', error);
-      res.status(500).json({ error: 'Error fetching data from Statbotics API' });
+      res
+        .status(500)
+        .json({ error: 'Error fetching data from Statbotics API' });
     });
 });
-
-
-
 
 const whiteboardSchema = new mongoose.Schema({
   matchKey: String,
   teamNumber: String,
   gamePhase: String,
-  data: Object
+  data: Object,
 });
 
 const Whiteboard = mongoose.model('Whiteboard', whiteboardSchema);
 
-
-
 app.get('/', async (req, res) => {
-
   // console.log(await fetchTeamData.fetchTeamDataStatbotics(1));
   // console.log(await fetchTeamData.fetchAllEventsCurrentYearTBA(1));
   // console.log(await fetchTeamData.fetchAllEventCodesCurrentYear(10252));
   // console.log(await fetchTeamData.fetchAllMatchesAtEventTBA(10252, "cabe"));
   // console.log(await fetchTeamData.fetchAllMatchKeysAtEventTBA(10252, "casj"));
 
-  res.sendFile("index.html", { root: path.join(__dirname, 'public') });
+  res.sendFile('index.html', { root: path.join(__dirname, 'public') });
   //temp for now. we can do login later
 });
 
@@ -102,37 +98,48 @@ app.get('/team/:team/', async (req, res) => {
   try {
     const allEvents = await fetchTeamData.fetchAllEventsCurrentYearTBA(team);
 
-    const eventData = allEvents.map(event => ({
-      event_code: event.event_code,
-      name: event.name,
-      week: event.week,
-      end_date: event.end_date,
-    })).sort((a, b) => {
-      const parseDate = (str) => {
-        const [year, month, day] = str.split('-').map(Number);
-        return new Date(2000 + year, month - 1, day);
-      };
+    const eventData = allEvents
+      .map(event => ({
+        event_code: event.event_code,
+        name: event.name,
+        week: event.week,
+        end_date: event.end_date,
+      }))
+      .sort((a, b) => {
+        const parseDate = str => {
+          const [year, month, day] = str.split('-').map(Number);
+          return new Date(2000 + year, month - 1, day);
+        };
 
-      return parseDate(a.end_date) - parseDate(b.end_date);
-    });
+        return parseDate(a.end_date) - parseDate(b.end_date);
+      });
 
     const allMatchData = [];
 
     for (const eventCode of eventData.map(event => event.event_code)) {
-      const matchData = await fetchTeamData.fetchAllMatchesAtEventTBA(team, eventCode);
-      allMatchData.push(matchData.map(match => ({
-        key: match.key,
-        comp_level: match.comp_level,
-        match_number: match.match_number,
-        set_number: match.set_number,
-        fancy_comp_level: fetchTeamData.getFancyQualName(match.comp_level),
-        fancy_match_number: fetchTeamData.getFancyMatchNumber(match.comp_level, match.match_number, match.set_number),
-        end_time: match.post_result_time,
-
-      })).sort((a, b) => {
-        return a.end_time - b.end_time;
-      }));
-
+      const matchData = await fetchTeamData.fetchAllMatchesAtEventTBA(
+        team,
+        eventCode
+      );
+      allMatchData.push(
+        matchData
+          .map(match => ({
+            key: match.key,
+            comp_level: match.comp_level,
+            match_number: match.match_number,
+            set_number: match.set_number,
+            fancy_comp_level: fetchTeamData.getFancyQualName(match.comp_level),
+            fancy_match_number: fetchTeamData.getFancyMatchNumber(
+              match.comp_level,
+              match.match_number,
+              match.set_number
+            ),
+            end_time: match.post_result_time,
+          }))
+          .sort((a, b) => {
+            return a.end_time - b.end_time;
+          })
+      );
     }
     // console.log(eventData)
 
@@ -142,7 +149,6 @@ app.get('/team/:team/', async (req, res) => {
     // res.status(404).send(`Error 404<br>Team ${team} not found <br> <a href="/">Go back</a>`);
     var error = `Team ${team} not found`;
     res.status(404).render('404', { error });
-
   }
 });
 
@@ -158,19 +164,25 @@ app.get('/redirect/team/', async (req, res) => {
   res.redirect(`/team/${team}`);
 });
 
-
-
 app.get('/whiteboard/:matchKey/:teamNumber/:gamePhase', async (req, res) => {
   const matchKey = req.params.matchKey;
   const gamePhase = req.params.gamePhase;
   const matchData = await fetchTeamData.fetchMatchDataTBA(matchKey);
-  const unformattedTeams = matchData.alliances.red.team_keys.concat(matchData.alliances.blue.team_keys);
+  const unformattedTeams = matchData.alliances.red.team_keys.concat(
+    matchData.alliances.blue.team_keys
+  );
   const teamNumber = req.params.teamNumber;
   const teams = [];
   unformattedTeams.forEach(element => {
     teams.push(element.substring(3));
   });
-  res.render('whiteboard', { matchKey, matchData, teams, teamNumber, gamePhase });
+  res.render('whiteboard', {
+    matchKey,
+    matchData,
+    teams,
+    teamNumber,
+    gamePhase,
+  });
 });
 
 app.post('/save/whiteboard', async (req, res) => {
@@ -180,7 +192,7 @@ app.post('/save/whiteboard', async (req, res) => {
     matchKey,
     teamNumber,
     gamePhase,
-    data
+    data,
   });
 
   try {
@@ -201,7 +213,11 @@ app.get('/saved/whiteboard', async (req, res) => {
 
   // console.log(`received request for matchKey: ${matchKey}, teamNumber: ${teamNumber}, gamePhase: ${gamePhase}`);
   try {
-    const whiteboards = await Whiteboard.find({ matchKey, teamNumber, gamePhase });
+    const whiteboards = await Whiteboard.find({
+      matchKey,
+      teamNumber,
+      gamePhase,
+    });
     res.status(200).json(whiteboards);
   } catch (error) {
     console.error('Error fetching saved whiteboard data:', error);

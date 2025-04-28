@@ -1,56 +1,62 @@
 <head>
-	<title>Match Page</title>
-	<link rel="stylesheet" href="/index.css">
-	<style>
-		.red {
-			background-color: rgb(255, 177, 177);
-		}
+  <title>Match Page</title>
+  <link rel="stylesheet" href="/index.css" />
+  <style>
+    .red {
+      background-color: rgb(255, 177, 177);
+    }
 
-		.blue {
-			background-color: rgb(177, 177, 255);
-		}
-	</style>
+    .blue {
+      background-color: rgb(177, 177, 255);
+    }
+  </style>
 </head>
 
 <body>
-	<%- include('header'); -%>
+  <%- include('header'); -%>
 
-		<h3>Match Page</h3>
-		<a href="/team/<%=teamNumber%>">Back to <%=teamNumber%> Main Page</a>
-		<h4>Match Code: <%=matchKey%>
-		</h4>
+  <h3>Match Page</h3>
+  <a href="/team/<%=teamNumber%>">Back to <%=teamNumber%> Main Page</a>
+  <h4>Match Code: <%=matchKey%></h4>
 
-		<div id="teams-container">
-			<table>
-				<tr>
-					<% matchData.alliances.red.team_keys.forEach((key, i)=> { %>
-						<td class="team red" style="vertical-align: top;">
-							<h4 style="color:black">Red <%=i + 1%>
-							</h4>
-							<p><a style="color:black"
-									href="https://www.thebluealliance.com/team/<%=matchData.alliances.red.team_keys[i].substring(3)%>"
-									target="_blank">
-									<%=matchData.alliances.red.team_keys[i]%>
-								</a></p>
-						</td>
-						<% }); %>
-				</tr>
-				<tr>
-					<% matchData.alliances.blue.team_keys.forEach((key, i)=> { %>
-						<td class="team blue" style="vertical-align: top;">
-							<h4 style="color:black">Blue <%=i + 1%>
-							</h4>
-							<p><a style="color:black"
-									href="https://www.thebluealliance.com/team/<%=matchData.alliances.blue.team_keys[i].substring(3)%>"
-									target="_blank">
-									<%=matchData.alliances.blue.team_keys[i]%>
-								</a></p>
-						</td>
-						<% }); %>
-				</tr>
-			</table>
+  <div id="teams-container">
+    <table>
+      <tr>
+        <% matchData.alliances.red.team_keys.forEach((key, i)=> { %>
+        <td class="team red" style="vertical-align: top">
+          <h4 style="color: black">Red <%=i + 1%></h4>
+          <p>
+            <a
+              style="color: black"
+              href="https://www.thebluealliance.com/team/<%=matchData.alliances.red.team_keys[i].substring(3)%>"
+              target="_blank"
+            >
+              <%=matchData.alliances.red.team_keys[i]%>
+            </a>
+          </p>
+        </td>
+        <% }); %>
+      </tr>
+      <tr>
+        <% matchData.alliances.blue.team_keys.forEach((key, i)=> { %>
+        <td class="team blue" style="vertical-align: top">
+          <h4 style="color: black">Blue <%=i + 1%></h4>
+          <p>
+            <a
+              style="color: black"
+              href="https://www.thebluealliance.com/team/<%=matchData.alliances.blue.team_keys[i].substring(3)%>"
+              target="_blank"
+            >
+              <%=matchData.alliances.blue.team_keys[i]%>
+            </a>
+          </p>
+        </td>
+        <% }); %>
+      </tr>
+    </table>
 
-			<a href="/whiteboard/<%=matchKey%>/<%=teamNumber%>/autonomous">
-				<button id="whiteboard-button">Open Whiteboard</button>
-		</div>
+    <a href="/whiteboard/<%=matchKey%>/<%=teamNumber%>/autonomous">
+      <button id="whiteboard-button">Open Whiteboard</button>
+    </a>
+  </div>
 </body>
