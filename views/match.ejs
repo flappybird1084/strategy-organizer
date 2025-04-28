@@ -54,9 +54,45 @@
         <% }); %>
       </tr>
     </table>
-
-    <a href="/whiteboard/<%=matchKey%>/<%=teamNumber%>/autonomous">
-      <button id="whiteboard-button">Open Whiteboard</button>
-    </a>
   </div>
+
+  <div id="match-stats">
+    <h3>Scores</h3>
+    <table>
+      <tr>
+        <th></th>
+        <th>Red</th>
+        <th>Blue</th>
+      </tr>
+      <tr>
+        <td>Autonomous</td>
+        <td><%=matchData.score_breakdown.red.autoPoints%></td>
+        <td><%=matchData.score_breakdown.blue.autoPoints%></td>
+      </tr>
+      <tr>
+        <td>Teleop</td>
+        <td>
+          <%=matchData.score_breakdown.red.teleopPoints-matchData.score_breakdown.red.endGameBargePoints%>
+        </td>
+        <td>
+          <%=matchData.score_breakdown.blue.teleopPoints-matchData.score_breakdown.blue.endGameBargePoints%>
+        </td>
+      </tr>
+
+      <tr>
+        <td>Endgame</td>
+        <td><%=matchData.score_breakdown.red.endGameBargePoints%></td>
+        <td><%=matchData.score_breakdown.blue.endGameBargePoints%></td>
+      </tr>
+      <tr>
+        <td><b>Total</b></td>
+        <td><%=matchData.score_breakdown.red.totalPoints%></td>
+        <td><%=matchData.score_breakdown.blue.totalPoints%></td>
+      </tr>
+    </table>
+  </div>
+
+  <a href="/whiteboard/<%=matchKey%>/<%=teamNumber%>/autonomous">
+    <button id="whiteboard-button">Open Whiteboard</button>
+  </a>
 </body>

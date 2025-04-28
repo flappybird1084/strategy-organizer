@@ -40,36 +40,36 @@
         const previousNotices = formContainer.querySelectorAll('.api-notice');
         previousNotices.forEach(notice => notice.remove());
 
-				const loadingDiv = document.createElement('div');
-				loadingDiv.className = 'api-loading';
-				loadingDiv.innerHTML = "Loading...";
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'api-loading';
+        loadingDiv.innerHTML = 'Loading...';
 
-				loadingDiv.style.fontSize = "18px";
-				loadingDiv.style.fontWeight = "bold";
-				loadingDiv.style.marginTop = "10px";
-				loadingDiv.style.animation = "blinker 1.5s linear infinite";
+        loadingDiv.style.fontSize = '18px';
+        loadingDiv.style.fontWeight = 'bold';
+        loadingDiv.style.marginTop = '10px';
+        loadingDiv.style.animation = 'blinker 1.5s linear infinite';
 
-				formContainer.appendChild(loadingDiv);
-				const form = formContainer.querySelector('form');
-				if (form) {
-				  form.style.display = 'none';
-				}
-				const teamPrompt = document.querySelector('p');
+        formContainer.appendChild(loadingDiv);
+        const form = formContainer.querySelector('form');
+        if (form) {
+          form.style.display = 'none';
+        }
+        const teamPrompt = document.querySelector('p');
 
-				if (teamPrompt) {
-				  teamPrompt.style.display = 'none';
-				}
+        if (teamPrompt) {
+          teamPrompt.style.display = 'none';
+        }
 
-				// Add blinking animation using a style tag
-				const style = document.createElement('style');
-				style.textContent = `
+        // Add blinking animation using a style tag
+        const style = document.createElement('style');
+        style.textContent = `
 				  @keyframes blinker {
 					50% { opacity: 0; }
 				  }
 				`;
-				document.head.appendChild(style);
-			}
-		});
+        document.head.appendChild(style);
+      }
+    });
 
     const toggleBtn = document.getElementById('theme-toggle');
 
