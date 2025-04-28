@@ -37,18 +37,34 @@
 				const previousNotices = formContainer.querySelectorAll('.api-notice');
 				previousNotices.forEach(notice => notice.remove());
 
-				const newDiv = document.createElement('div');
-				newDiv.className = 'api-notice';
-				newDiv.innerHTML = "Note: The Blue Alliance's API experiences variable demand. Please wait a moment for the page to load.";
+				const loadingDiv = document.createElement('div');
+				loadingDiv.className = 'api-loading';
+				loadingDiv.innerHTML = "Loading...";
 
-				newDiv.style.border = "1px solid #f5c2c7";
-				newDiv.style.backgroundColor = "#f8d7da";
-				newDiv.style.padding = "10px";
-				newDiv.style.borderRadius = "4px";
-				newDiv.style.marginTop = "10px";
-				newDiv.style.color = "#842029";
+				loadingDiv.style.fontSize = "18px";
+				loadingDiv.style.fontWeight = "bold";
+				loadingDiv.style.marginTop = "10px";
+				loadingDiv.style.animation = "blinker 1.5s linear infinite";
 
-				formContainer.appendChild(newDiv);
+				formContainer.appendChild(loadingDiv);
+				const form = formContainer.querySelector('form');
+				if (form) {
+				  form.style.display = 'none';
+				}
+				const teamPrompt = document.querySelector('p');
+
+				if (teamPrompt) {
+				  teamPrompt.style.display = 'none';
+				}
+
+				// Add blinking animation using a style tag
+				const style = document.createElement('style');
+				style.textContent = `
+				  @keyframes blinker {
+					50% { opacity: 0; }
+				  }
+				`;
+				document.head.appendChild(style);
 			}
 		});
 
