@@ -126,18 +126,18 @@
     </div>
 
     <br><br><br>
-    <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/autonomous">
-      <button id="autonomous-button"
-        style="background: rgb(255, 131, 131); padding: 10px; width: 100%; border: none; text-decoration: none;">🤖 Autonomous</button>
-    </a>
-    <a href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/teleoperated">
-      <button id="teleop-button"
-        style="background: rgb(107, 255, 198); padding: 10px; width: 100%; border: none; text-decoration: none;">🚀 Teleoperated</button>
-    </a>
-    <a href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/endgame">
-      <button id="endgame-button"
-        style="background: rgb(154, 99, 255); padding: 10px; width: 100%; border: none; text-decoration: none;">🏁 Endgame</button>
-    </a>
+  <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/autonomous" id="autonomous-link">
+    <button id="autonomous-button"
+      style="background: rgb(255, 131, 131); padding: 10px; width: 100%; border: none; text-decoration: none;">🤖 Autonomous</button>
+  </a>
+  <a href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/teleoperated" id="teleop-link">
+    <button id="teleop-button"
+      style="background: rgb(107, 255, 198); padding: 10px; width: 100%; border: none; text-decoration: none;">🚀 Teleoperated</button>
+  </a>
+  <a href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/endgame" id="endgame-link">
+    <button id="endgame-button"
+      style="background: rgb(154, 99, 255); padding: 10px; width: 100%; border: none; text-decoration: none;">🏁 Endgame</button>
+  </a>
   </div>
 
     <div id="whiteboard-container">
@@ -165,6 +165,7 @@
         </div>
 
   </div>
+  <div id="notification" style="position: fixed; top: 20px; right: 20px; background: #4caf50; color: white; padding: 10px 20px; border-radius: 5px; display: none; z-index: 9999;"></div>
 
   <script>
     let draggablePositions = [];
@@ -172,6 +173,8 @@
     let currentStroke = [];
     let redoStack = [];
     const whiteboard = document.getElementById('whiteboard');
+    // Track unsaved changes
+    let isSaved = true;
 
     const gamePhase = '<%= gamePhase %>';
     const autonomousButton = document.getElementById('autonomous-button');
@@ -219,6 +222,7 @@
         drawing = true;
         lastX = (e.offsetX * whiteboard.width) / whiteboard.clientWidth;
         lastY = (e.offsetY * whiteboard.height) / whiteboard.clientHeight;
+        isSaved = false;
         console.log('mousedown at', e.offsetX, e.offsetY);
       });
 
@@ -254,6 +258,7 @@
 
         lastX = x;
         lastY = y;
+        isSaved = false;
         console.log(`mousemove at ${x}, ${y}`);
       });
 
@@ -272,7 +277,15 @@
       }
     }
 
-
+    function showNotification(message, isError = false) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.backgroundColor = isError ? '#f44336' : '#4caf50';
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
 
     // window.addEventListener('resize', () => {
     //   whiteboard.width = window.innerWidth;
@@ -374,6 +387,15 @@
             teamNumber: '<%=teamNumber%>',
             gamePhase: '<%=gamePhase%>',
           }),
+        }).then(response => {
+          if (response.ok) {
+            showNotification('✅ Whiteboard saved successfully!');
+            isSaved = true;
+          } else {
+            showNotification('❌ Failed to save whiteboard.', true);
+          }
+        }).catch(() => {
+          showNotification('❌ Failed to save whiteboard.', true);
         });
       });
       loadButton.addEventListener('click', () => {
@@ -389,7 +411,12 @@
             'Content-Type': 'application/json',
           },
         })
-          .then(response => response.json())
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
           .then(data => {
             console.log('Data:', data);
             strokes = data[0].data.strokes;
@@ -399,9 +426,11 @@
             console.log('Strokes:', strokes);
             console.log('Draggable Positions:', draggablePositions);
             redrawWhiteboard();
+            showNotification('✅ Whiteboard loaded successfully!');
           })
           .catch(error => {
             console.error('Error fetching whiteboard:', error);
+            showNotification('❌ Failed to load whiteboard.', true);
           });
       });
 
@@ -438,3 +467,4 @@
     </script>
   </body>
 </html>
+
