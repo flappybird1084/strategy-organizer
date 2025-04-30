@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Whiteboard</title>
-    <link rel="stylesheet" href="/index.css" />
-    <style>
-      :root {
-        --controls-width: 180px;
-      }
 
-      body {
-        display: flex;
-        height: 100vh;
-        overflow: auto;
-      }
+<head>
+  <title>Whiteboard</title>
+  <link rel="stylesheet" href="/index.css">
+  <style>
+    :root{
+      --controls-width: 180px;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      overflow: auto;
+    }
 
       #controls {
         width: var(--controls-width);
@@ -24,35 +25,35 @@
         border-right: 1px solid #ccc;
       }
 
-      .btn-link {
-        display: block;
-        text-decoration: none;
-        margin-bottom: 10px;
-      }
+    .btn-link {
+      display: block;
+      text-decoration: none;
+      margin-bottom: 10px;
+    }
 
-      .draggable {
-        position: absolute;
-        cursor: grab;
-        width: 5%;
-        aspect-ratio: 1;
-      }
+    .draggable {
+      position: absolute;
+      cursor: grab;
+      width: 5%;
+      aspect-ratio: 1;
+    }
 
-      #whiteboard-container {
-        position: relative;
-        width: 1200px;
-        height: 600px;
-        overflow: visible;
-        text-align: center;
-      }
+    #whiteboard-container {
+      position: relative;
+      width: 1200px;
+      height: 600px;
+      overflow: visible;
+      text-align: center;
+    }
 
-      canvas#whiteboard {
-        margin-top: 0;
-        width: 1200px;
-        height: 600px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-      }
+    canvas#whiteboard {
+      margin-top: 0;
+      width: 1200px;
+      height: 600px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
 
       .color-swatch {
         width: 24px;
@@ -107,178 +108,87 @@
       <button id="redo-button">↪️ Redo</button>
       <button id="color-button">🎨 Color</button>
 
-      <div style="position: relative">
-        <div
-          id="color-popup"
-          style="
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 110%;
-            background: white;
-            border: 1px solid #ccc;
-            padding: 5px;
-            z-index: 1000;
-          "
-        >
-          <div class="color-grid">
-            <div
-              class="color-swatch selected"
-              style="background: black"
-              data-color="#000000"
-            ></div>
-            <div
-              class="color-swatch"
-              style="background: red"
-              data-color="#ff0000"
-            ></div>
-            <div
-              class="color-swatch"
-              style="background: orange"
-              data-color="#ffa500"
-            ></div>
-            <div
-              class="color-swatch"
-              style="background: yellow"
-              data-color="#ffff00"
-            ></div>
-            <div
-              class="color-swatch"
-              style="background: green"
-              data-color="#008000"
-            ></div>
-            <div
-              class="color-swatch"
-              style="background: blue"
-              data-color="#0000ff"
-            ></div>
-            <div
-              class="color-swatch"
-              style="background: purple"
-              data-color="#800080"
-            ></div>
-            <div
-              class="color-swatch"
-              style="background: gray"
-              data-color="#808080"
-            ></div>
-          </div>
+
+    <div style="position: relative;">
+      <div id="color-popup"
+        style="display: none; position: absolute; top: 0; left: 110%; background: white; border: 1px solid #ccc; padding: 5px; z-index: 1000;">
+        <div class="color-grid">
+          <div class="color-swatch selected" style="background: black;" data-color="#000000"></div>
+          <div class="color-swatch" style="background: red;" data-color="#ff0000"></div>
+          <div class="color-swatch" style="background: orange;" data-color="#ffa500"></div>
+          <div class="color-swatch" style="background: yellow;" data-color="#ffff00"></div>
+          <div class="color-swatch" style="background: green;" data-color="#008000"></div>
+          <div class="color-swatch" style="background: blue;" data-color="#0000ff"></div>
+          <div class="color-swatch" style="background: purple;" data-color="#800080"></div>
+          <div class="color-swatch" style="background: gray;" data-color="#808080"></div>
         </div>
       </div>
-
-      <br />
-      <br />
-      <br />
-      <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/autonomous">
-        <button
-          id="autonomous-button"
-          style="
-            background: rgb(255, 131, 131);
-            padding: 10px;
-            width: 100%;
-            border: none;
-            text-decoration: none;
-          "
-        >
-          🤖 Autonomous
-        </button>
-      </a>
-      <a href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/teleoperated">
-        <button
-          id="teleop-button"
-          style="
-            background: rgb(107, 255, 198);
-            padding: 10px;
-            width: 100%;
-            border: none;
-            text-decoration: none;
-          "
-        >
-          🚀 Teleoperated
-        </button>
-      </a>
-      <a href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/endgame">
-        <button
-          id="endgame-button"
-          style="
-            background: rgb(154, 99, 255);
-            padding: 10px;
-            width: 100%;
-            border: none;
-            text-decoration: none;
-          "
-        >
-          🏁 Endgame
-        </button>
-      </a>
     </div>
+
+    <br><br><br>
+  <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/autonomous" id="autonomous-link">
+    <button id="autonomous-button"
+      style="background: rgb(255, 131, 131); padding: 10px; width: 100%; border: none; text-decoration: none;">🤖 Autonomous</button>
+  </a>
+  <a href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/teleoperated" id="teleop-link">
+    <button id="teleop-button"
+      style="background: rgb(107, 255, 198); padding: 10px; width: 100%; border: none; text-decoration: none;">🚀 Teleoperated</button>
+  </a>
+  <a href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/endgame" id="endgame-link">
+    <button id="endgame-button"
+      style="background: rgb(154, 99, 255); padding: 10px; width: 100%; border: none; text-decoration: none;">🏁 Endgame</button>
+  </a>
+  </div>
+  <h1 style="position:absolute; left:200px"><%=gamePhase.charAt(0).toUpperCase() + gamePhase.slice(1)%></h1>
 
     <div id="whiteboard-container">
-      <canvas id="whiteboard"></canvas>
-      <div
-        class="draggable"
-        draggable="true"
-        style="top: 35%; left: 36%; background-color: red"
-      >
-        <%=teams[0]%>
-      </div>
-      <div
-        class="draggable"
-        draggable="true"
-        style="top: 50%; left: 36%; background-color: orange"
-      >
-        <%=teams[1]%>
-      </div>
-      <div
-        class="draggable"
-        draggable="true"
-        style="top: 65%; left: 36%; background-color: yellow"
-      >
-        <%=teams[2]%>
-      </div>
-      <div
-        class="draggable"
-        draggable="true"
-        style="top: 35%; left: 57%; background-color: green"
-      >
-        <%=teams[3]%>
-      </div>
-      <div
-        class="draggable"
-        draggable="true"
-        style="top: 50%; left: 57%; background-color: blue"
-      >
-        <%=teams[4]%>
-      </div>
-      <div
-        class="draggable"
-        draggable="true"
-        style="top: 65%; left: 57%; background-color: purple"
-      >
-        <%=teams[5]%>
-      </div>
-    </div>
+                     
+      <canvas id="whiteboard">
+     
+      </canvas>
+         <div class="draggable" draggable="true" style="top: 35%; left: 36%; background-color: red;">
+          <%=teams[0]%>
+        </div>
+        <div class="draggable" draggable="true" style="top: 50%; left: 36%; background-color: orange;">
+          <%=teams[1]%>
+        </div>
+        <div class="draggable" draggable="true" style="top: 65%; left: 36%; background-color: yellow;">
+          <%=teams[2]%>
+        </div>
+        <div class="draggable" draggable="true" style="top: 35%; left: 57%; background-color: green;">
+          <%=teams[3]%>
+        </div>
+        <div class="draggable" draggable="true" style="top: 50%; left: 57%; background-color: blue;">
+          <%=teams[4]%>
+        </div>
+        <div class="draggable" draggable="true" style="top: 65%; left: 57%; background-color: purple;">
+          <%=teams[5]%>
+        </div>
 
-    <script>
-      let draggablePositions = [];
-      let strokes = [];
-      let currentStroke = [];
-      let redoStack = [];
-      const whiteboard = document.getElementById('whiteboard');
+  </div>
+  <div id="notification" style="position: fixed; top: 20px; right: 20px; background: #4caf50; color: white; padding: 10px 20px; border-radius: 5px; display: none; z-index: 9999;"></div>
 
-      const gamePhase = '<%= gamePhase %>';
-      const autonomousButton = document.getElementById('autonomous-button');
-      const teleopButton = document.getElementById('teleop-button');
-      const endgameButton = document.getElementById('endgame-button');
+  <script>
+    let draggablePositions = [];
+    let strokes = [];
+    let currentStroke = [];
+    let redoStack = [];
+    const whiteboard = document.getElementById('whiteboard');
+    // Track unsaved changes
+    let isSaved = true;
 
-      if (gamePhase === 'autonomous') {
-        autonomousButton.style.boxShadow =
-          '0 0 10px 5px rgba(255, 131, 131, 0.7)';
-      } else if (gamePhase === 'teleoperated') {
-        teleopButton.style.boxShadow = '0 0 10px 5px rgba(107, 255, 198, 0.7)';
-      } else if (gamePhase === 'endgame') {
-        endgameButton.style.boxShadow = '0 0 10px 5px rgba(154, 99, 255, 0.7)';
-      }
+    const gamePhase = '<%= gamePhase %>';
+    const autonomousButton = document.getElementById('autonomous-button');
+    const teleopButton = document.getElementById('teleop-button');
+    const endgameButton = document.getElementById('endgame-button');
+
+    if (gamePhase === 'autonomous') {
+      autonomousButton.style.boxShadow = '0 0 10px 5px rgba(255, 131, 131, 0.7)';
+    } else if (gamePhase === 'teleoperated') {
+      teleopButton.style.boxShadow = '0 0 10px 5px rgba(107, 255, 198, 0.7)';
+    } else if (gamePhase === 'endgame') {
+      endgameButton.style.boxShadow = '0 0 10px 5px rgba(154, 99, 255, 0.7)';
+    }
 
       const ctx = whiteboard.getContext('2d');
       whiteboard.style.backgroundImage = 'url(/images/reefscape-bg-2.png)';
@@ -353,38 +263,38 @@
         console.log(`mousemove at ${x}, ${y}`);
       });
 
-      function redrawWhiteboard() {
-        ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-        for (const stroke of strokes) {
-          for (const action of stroke) {
-            ctx.beginPath();
-            ctx.lineWidth = action.brushSize;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = action.brushColor;
-            ctx.moveTo(action.lastX, action.lastY);
-            ctx.lineTo(action.x, action.y);
-            ctx.stroke();
-          }
+    function redrawWhiteboard() {
+      ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+      for (const stroke of strokes) {
+        for (const action of stroke) {
+          ctx.beginPath();
+          ctx.lineWidth = action.brushSize;
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = action.brushColor;
+          ctx.moveTo(action.lastX, action.lastY);
+          ctx.lineTo(action.x, action.y);
+          ctx.stroke();
         }
       }
+    }
 
-      // window.addEventListener('resize', () => {
-      //   whiteboard.width = window.innerWidth;
-      //   whiteboard.height = window.innerHeight;
-      // });
+    function showNotification(message, isError = false) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.backgroundColor = isError ? '#f44336' : '#4caf50';
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
 
-      function showNotification(message, isError = false) {
-        const notification = document.getElementById('notification');
-        notification.textContent = message;
-        notification.style.backgroundColor = isError ? '#f44336' : '#4caf50';
-        notification.style.display = 'block';
-        setTimeout(() => {
-          notification.style.display = 'none';
-        }, 3000);
-      }
+    // window.addEventListener('resize', () => {
+    //   whiteboard.width = window.innerWidth;
+    //   whiteboard.height = window.innerHeight;
+    // });
 
-      whiteboard.width = 1200;
-      whiteboard.height = 600;
+    whiteboard.width = 1200;
+    whiteboard.height = 600;
 
       const draggables = document.querySelectorAll('.draggable');
       let offsetX, offsetY;
@@ -478,18 +388,16 @@
             teamNumber: '<%=teamNumber%>',
             gamePhase: '<%=gamePhase%>',
           }),
-        })
-          .then(response => {
-            if (response.ok) {
-              showNotification('✅ Whiteboard saved successfully!');
-              isSaved = true;
-            } else {
-              showNotification('❌ Failed to save whiteboard.', true);
-            }
-          })
-          .catch(() => {
+        }).then(response => {
+          if (response.ok) {
+            showNotification('✅ Whiteboard saved successfully!');
+            isSaved = true;
+          } else {
             showNotification('❌ Failed to save whiteboard.', true);
-          });
+          }
+        }).catch(() => {
+          showNotification('❌ Failed to save whiteboard.', true);
+        });
       });
       loadButton.addEventListener('click', () => {
         const matchKey = '<%=matchKey%>';
@@ -531,14 +439,13 @@
         const whiteboardContainer = document.getElementById(
           'whiteboard-container'
         );
+        console.log("full draggable positions", draggablePositions);
+        draggablePositions = draggablePositions.splice(draggablePositions.length-6);
+
 
         document.querySelectorAll('.draggable').forEach((draggable, index) => {
-          // console.log("new object: ", draggablePositions[index]);
-          // const newDraggableHTML = draggablePositions[index];
-          // whiteboardContainer.innerHTML += newDraggableHTML;
-          // console.log("new draggable html", newDraggableHTML)
-
           const newDraggablePosition = draggablePositions[index];
+          console.log("new draggable position of index ", index, "is ", newDraggablePosition);
           draggable.style.left = `${newDraggablePosition.left}%`;
           draggable.style.top = `${newDraggablePosition.top}%`;
         });
@@ -560,3 +467,4 @@
     </script>
   </body>
 </html>
+

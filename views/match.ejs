@@ -89,6 +89,11 @@
         <td><%=matchData.score_breakdown.red.totalPoints%></td>
         <td><%=matchData.score_breakdown.blue.totalPoints%></td>
       </tr>
+			<tr>
+				<td><i>Penalty</i></td>
+				<td><i><%=matchData.score_breakdown.red.totalPoints-(matchData.score_breakdown.red.autoPoints+matchData.score_breakdown.red.teleopPoints)%></i></td>
+				<td><i><%=matchData.score_breakdown.blue.totalPoints-(matchData.score_breakdown.blue.autoPoints+matchData.score_breakdown.blue.teleopPoints)%></i></td>
+			</tr>
     </table>
   </div>
 
