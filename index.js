@@ -156,7 +156,8 @@ app.get('/match/:matchKey/:team', async (req, res) => {
   const matchKey = req.params.matchKey;
   const matchData = await fetchTeamData.fetchMatchDataTBA(matchKey);
   const teamNumber = req.params.team;
-  res.render('match', { matchKey, matchData, teamNumber });
+  const statboticsData = await fetchTeamData.getStatboticsMatchData(matchKey);
+  res.render('match', { matchKey, matchData, teamNumber, statboticsData });
 });
 
 app.get('/redirect/team/', async (req, res) => {

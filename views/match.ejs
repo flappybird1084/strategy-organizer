@@ -9,6 +9,27 @@
     .blue {
       background-color: rgb(177, 177, 255);
     }
+
+    #match-stats {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .stat-container {
+      display: flex;
+      flex-direction: column;
+      margin-right: 50px;
+    }
+
+		.yt-embed-video {
+			width: 80%;
+			height: auto;
+			aspect-ratio: 16/9;
+			margin-top: 20px;
+			margin-bottom:100px;
+		}
+
   </style>
 </head>
 
@@ -57,47 +78,90 @@
   </div>
 
   <div id="match-stats">
-    <h3>Scores</h3>
-    <table>
-      <tr>
-        <th></th>
-        <th>Red</th>
-        <th>Blue</th>
-      </tr>
-      <tr>
-        <td>Autonomous</td>
-        <td><%=matchData.score_breakdown.red.autoPoints%></td>
-        <td><%=matchData.score_breakdown.blue.autoPoints%></td>
-      </tr>
-      <tr>
-        <td>Teleop</td>
-        <td>
-          <%=matchData.score_breakdown.red.teleopPoints-matchData.score_breakdown.red.endGameBargePoints%>
-        </td>
-        <td>
-          <%=matchData.score_breakdown.blue.teleopPoints-matchData.score_breakdown.blue.endGameBargePoints%>
-        </td>
-      </tr>
+    <div id="score-breakdown" class="stat-container">
+      <h3>Scores</h3>
+      <table>
+        <tr>
+          <th></th>
+          <th>Red</th>
+          <th>Blue</th>
+        </tr>
+        <tr>
+          <td>Autonomous</td>
+          <td><%=matchData.score_breakdown.red.autoPoints%></td>
+          <td><%=matchData.score_breakdown.blue.autoPoints%></td>
+        </tr>
+        <tr>
+          <td>Teleop</td>
+          <td>
+            <%=matchData.score_breakdown.red.teleopPoints-matchData.score_breakdown.red.endGameBargePoints%>
+          </td>
+          <td>
+            <%=matchData.score_breakdown.blue.teleopPoints-matchData.score_breakdown.blue.endGameBargePoints%>
+          </td>
+        </tr>
 
-      <tr>
-        <td>Endgame</td>
-        <td><%=matchData.score_breakdown.red.endGameBargePoints%></td>
-        <td><%=matchData.score_breakdown.blue.endGameBargePoints%></td>
-      </tr>
-      <tr>
-        <td><b>Total</b></td>
-        <td><%=matchData.score_breakdown.red.totalPoints%></td>
-        <td><%=matchData.score_breakdown.blue.totalPoints%></td>
-      </tr>
-			<tr>
-				<td><i>Penalty</i></td>
-				<td><i><%=matchData.score_breakdown.red.totalPoints-(matchData.score_breakdown.red.autoPoints+matchData.score_breakdown.red.teleopPoints)%></i></td>
-				<td><i><%=matchData.score_breakdown.blue.totalPoints-(matchData.score_breakdown.blue.autoPoints+matchData.score_breakdown.blue.teleopPoints)%></i></td>
-			</tr>
-    </table>
+        <tr>
+          <td>Endgame</td>
+          <td><%=matchData.score_breakdown.red.endGameBargePoints%></td>
+          <td><%=matchData.score_breakdown.blue.endGameBargePoints%></td>
+        </tr>
+        <tr>
+          <td><b>Total</b></td>
+          <td><%=matchData.score_breakdown.red.totalPoints%></td>
+          <td><%=matchData.score_breakdown.blue.totalPoints%></td>
+        </tr>
+        <tr>
+          <td><i>Penalty</i></td>
+          <td>
+            <i>
+              <%=matchData.score_breakdown.red.totalPoints-(matchData.score_breakdown.red.autoPoints+matchData.score_breakdown.red.teleopPoints)%>
+            </i>
+          </td>
+          <td>
+            <i>
+              <%=matchData.score_breakdown.blue.totalPoints-(matchData.score_breakdown.blue.autoPoints+matchData.score_breakdown.blue.teleopPoints)%>
+            </i>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="match-predictions" class="stat-container">
+      <h3>Match Predictions</h3>
+      <table>
+        <tr>
+          <td>Statistic</td>
+          <td>Prediction</td>
+          <td><b>Actual</b></td>
+        </tr>
+
+        <tr>
+          <td>Red Score</td>
+          <td><%=statboticsData.pred.red_score%></td>
+          <td><%=statboticsData.result.red_score%></td>
+        </tr>
+        <tr>
+          <td>Blue Score</td>
+          <td><%=statboticsData.pred.blue_score%></td>
+          <td><%=statboticsData.result.blue_score%></td>
+        </tr>
+        <tr>
+          <td><b>Win</b></td>
+          <td>
+            <%= statboticsData.pred.red_win_prob > 0.5 ? 'Red' : 'Blue' %> (<%=
+            (statboticsData.pred.red_win_prob * 100).toFixed(2) %>%)
+          </td>
+          <td>
+            <b><%=statboticsData.result.winner.charAt(0).toUpperCase()+statboticsData.result.winner.slice(1)%></b>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
 
   <a href="/whiteboard/<%=matchKey%>/<%=teamNumber%>/autonomous">
     <button id="whiteboard-button">Open Whiteboard</button>
   </a>
+
+	<iframe src="https://www.youtube.com/embed/<%=statboticsData.video%>" class="yt-embed-video" frameborder="2px" allowfullscreen></iframe>
 </body>
