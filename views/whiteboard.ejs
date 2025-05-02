@@ -169,7 +169,10 @@
       <br />
       <br />
       <br />
-      <a href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/autonomous">
+      <a
+        href="/whiteboard/<%= matchKey %>/<%= teamNumber %>/autonomous"
+        id="autonomous-link"
+      >
         <button
           id="autonomous-button"
           style="
@@ -183,7 +186,10 @@
           🤖 Autonomous
         </button>
       </a>
-      <a href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/teleoperated">
+      <a
+        href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/teleoperated"
+        id="teleop-link"
+      >
         <button
           id="teleop-button"
           style="
@@ -197,7 +203,10 @@
           🚀 Teleoperated
         </button>
       </a>
-      <a href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/endgame">
+      <a
+        href="/whiteboard/<%=matchKey %>/<%= teamNumber %>/endgame"
+        id="endgame-link"
+      >
         <button
           id="endgame-button"
           style="
@@ -212,6 +221,9 @@
         </button>
       </a>
     </div>
+    <h1 style="position: absolute; left: 200px">
+      <%=gamePhase.charAt(0).toUpperCase() + gamePhase.slice(1)%>
+    </h1>
 
     <div id="whiteboard-container">
       <canvas id="whiteboard"></canvas>
@@ -258,6 +270,20 @@
         <%=teams[5]%>
       </div>
     </div>
+    <div
+      id="notification"
+      style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: none;
+        z-index: 9999;
+      "
+    ></div>
 
     <script>
       let draggablePositions = [];
@@ -265,6 +291,8 @@
       let currentStroke = [];
       let redoStack = [];
       const whiteboard = document.getElementById('whiteboard');
+      // Track unsaved changes
+      let isSaved = true;
 
       const gamePhase = '<%= gamePhase %>';
       const autonomousButton = document.getElementById('autonomous-button');
@@ -368,11 +396,6 @@
         }
       }
 
-      // window.addEventListener('resize', () => {
-      //   whiteboard.width = window.innerWidth;
-      //   whiteboard.height = window.innerHeight;
-      // });
-
       function showNotification(message, isError = false) {
         const notification = document.getElementById('notification');
         notification.textContent = message;
@@ -382,6 +405,11 @@
           notification.style.display = 'none';
         }, 3000);
       }
+
+      // window.addEventListener('resize', () => {
+      //   whiteboard.width = window.innerWidth;
+      //   whiteboard.height = window.innerHeight;
+      // });
 
       whiteboard.width = 1200;
       whiteboard.height = 600;
@@ -530,14 +558,19 @@
         const whiteboardContainer = document.getElementById(
           'whiteboard-container'
         );
+        console.log('full draggable positions', draggablePositions);
+        draggablePositions = draggablePositions.splice(
+          draggablePositions.length - 6
+        );
 
         document.querySelectorAll('.draggable').forEach((draggable, index) => {
-          // console.log("new object: ", draggablePositions[index]);
-          // const newDraggableHTML = draggablePositions[index];
-          // whiteboardContainer.innerHTML += newDraggableHTML;
-          // console.log("new draggable html", newDraggableHTML)
-
           const newDraggablePosition = draggablePositions[index];
+          console.log(
+            'new draggable position of index ',
+            index,
+            'is ',
+            newDraggablePosition
+          );
           draggable.style.left = `${newDraggablePosition.left}%`;
           draggable.style.top = `${newDraggablePosition.top}%`;
         });

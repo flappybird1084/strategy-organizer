@@ -19,10 +19,11 @@ import { set } from 'mongoose';
 //   module.exports = TeamDataFetcher;
 // // export default TeamDataFetcher;
 
+const BASE_URL = 'http://localhost:3000';
 export class TeamDataFetcher {
   async fetchTeamDataStatbotics(teamId) {
     try {
-      const url = `http://localhost:3000/api/statbotics/team/${teamId}`;
+      const url = `${BASE_URL}/api/statbotics/team/${teamId}`;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(
@@ -39,7 +40,7 @@ export class TeamDataFetcher {
 
   async fetchAllEventsCurrentYearTBA(teamId, year = 2025) {
     try {
-      const url = `http://localhost:3000/api/tba/team/${'frc' + teamId}/events/${year}`;
+      const url = `${BASE_URL}/api/tba/team/${'frc' + teamId}/events/${year}`;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(
@@ -73,7 +74,7 @@ export class TeamDataFetcher {
   async fetchAllMatchesAtEventTBA(teamId, eventCode, year = 2025) {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/tba/team/${'frc' + teamId}/event/${year + eventCode}/matches`
+        `${BASE_URL}/api/tba/team/${'frc' + teamId}/event/${year + eventCode}/matches`
       );
       if (!response.ok) {
         throw new Error(
@@ -108,9 +109,7 @@ export class TeamDataFetcher {
 
   async fetchMatchDataTBA(matchKey) {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/tba/match/${matchKey}`
-      );
+      const response = await fetch(`${BASE_URL}/api/tba/match/${matchKey}`);
       if (!response.ok) {
         throw new Error(
           `Failed to fetch matches for event ${eventCode}: ${response.statusText}`
@@ -147,6 +146,24 @@ export class TeamDataFetcher {
         return match_number;
       default:
         return match_number;
+    }
+  }
+
+  async getStatboticsMatchData(matchKey) {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/statbotics/match/${matchKey}`
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch matches for event ${eventCode}: ${response.statusText}`
+        );
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(`Error fetching matches for event ${eventCode}:`, error);
+      throw error;
     }
   }
 }
