@@ -1,90 +1,76 @@
-<head>
-  <title>Team Main Page</title>
-  <link rel="stylesheet" href="/index.css" />
-</head>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Team Main Page</title>
+    <link rel="stylesheet" href="/index.css" />
+    <link rel="stylesheet" href="/loader.css">
+    <style>
+      .loading-text {
+        position: absolute;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        z-index: 1001;
+        text-shadow: 0 0 5px #000;
+      }
+    </style>
+  </head>
 
-<body>
-  <button
-    id="theme-toggle"
-    style="max-width: 200px; position: absolute; top: 50px; right: 50px"
-  >
-    Toggle Dark Mode
-  </button>
+  <body>
+    <div>
+    <button
+      id="theme-toggle"
+      style="max-width: 200px; position: absolute; top: 50px; right: 50px"
+    >
+      Toggle Dark Mode
+    </button>
 
-  <h3>Main Page</h3>
-  <p>Enter Team Number</p>
-  <div id="form-container">
-    <form action="/redirect/team" method="get">
-      <input type="text" name="team" placeholder="Numbers only!" />
-      <button id="submitBtn" type="submit">Submit</button>
-    </form>
+    <h3>Main Page</h3>
+    <p>Enter Team Number</p>
+    <div id="form-container">
+      <form action="/redirect/team" method="get">
+        <input type="text" name="team" placeholder="Numbers only!" />
+        <button id="submitBtn">Submit</button>
+      </form>
+    </div>
+
+    <script>
+
+      document.getElementById('submitBtn').addEventListener('click', function (event) {
+        const teamInput = document.querySelector('input[name="team"]');
+        const teamNumber = teamInput.value.trim();
+        if (teamNumber === '') {
+          alert('Please enter a team number.');
+          event.preventDefault();
+        } else if (!/^[0-9]+$/.test(teamNumber)) {
+          alert('Please enter a valid team number (numbers only).');
+          event.preventDefault();
+        } else {
+          event.preventDefault();
+          const url = `/redirect/team?team=${encodeURIComponent(teamNumber)}`;
+          triggerPageTransition(url);
+        }
+      });
+
+      const toggleBtn = document.getElementById('theme-toggle');
+
+      toggleBtn.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark-mode');
+        const isDark = document.documentElement.classList.contains('dark-mode');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark-mode');
+        }
+      });
+
+    </script>
   </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const previousNotices = formContainer.querySelectorAll('.api-notice');
-      previousNotices.forEach(notice => notice.remove());
-    });
-    document.getElementById('submitBtn').addEventListener('click', function () {
-      const teamInput = document.querySelector('input[name="team"]');
-      const teamNumber = teamInput.value.trim();
-      if (teamNumber === '') {
-        alert('Please enter a team number.');
-        event.preventDefault();
-      } else if (!/^[0-9]+$/.test(teamNumber)) {
-        alert('Please enter a valid team number (numbers only).');
-        event.preventDefault();
-      } else {
-        const formContainer = document.getElementById('form-container');
-
-        const previousNotices = formContainer.querySelectorAll('.api-notice');
-        previousNotices.forEach(notice => notice.remove());
-
-        const loadingDiv = document.createElement('div');
-        loadingDiv.className = 'api-loading';
-        loadingDiv.innerHTML = 'Loading...';
-
-        loadingDiv.style.fontSize = '18px';
-        loadingDiv.style.fontWeight = 'bold';
-        loadingDiv.style.marginTop = '10px';
-        loadingDiv.style.animation = 'blinker 1.5s linear infinite';
-
-        formContainer.appendChild(loadingDiv);
-        const form = formContainer.querySelector('form');
-        if (form) {
-          form.style.display = 'none';
-        }
-        const teamPrompt = document.querySelector('p');
-
-        if (teamPrompt) {
-          teamPrompt.style.display = 'none';
-        }
-
-        // Add blinking animation using a style tag
-        const style = document.createElement('style');
-        style.textContent = `
-				  @keyframes blinker {
-					50% { opacity: 0; }
-				  }
-				`;
-        document.head.appendChild(style);
-      }
-    });
-
-    const toggleBtn = document.getElementById('theme-toggle');
-
-    toggleBtn.addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark-mode');
-
-      const isDark = document.documentElement.classList.contains('dark-mode');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark') {
-        document.documentElement.classList.add('dark-mode');
-      }
-    });
-  </script>
-</body>
+    <div id="loading-box" style="display: none;"><span class="blinking">Loading...</span></div>
+    <iframe id="preload-frame"></iframe>
+  <script src="/loader.js" defer></script>
+  </body>
+</html>

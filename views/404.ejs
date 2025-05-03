@@ -1,6 +1,7 @@
 <head>
   <title>Team Main Page</title>
   <link rel="stylesheet" href="/index.css" />
+  <script src="/iframecheck.js"></script>
   <style>
     .error-container {
       text-align: center;
@@ -17,6 +18,11 @@
     <br />
     <%=error%>
     <br />
-    <a href="/">Go back</a>
+    <button id="back-button" style="margin-top: 10px;">⬇ Go Back</button>
+    <script>
+      document.getElementById('back-button').addEventListener('click', () => {
+        window.parent.postMessage({ type: 'reverse-animation' }, '*');
+      });
+    </script>
   </div>
 </body>

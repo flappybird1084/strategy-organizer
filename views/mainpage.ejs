@@ -1,31 +1,45 @@
-<head>
-  <title>Team Main Page</title>
-  <link rel="stylesheet" href="/index.css" />
-</head>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Team Main Page</title>
+    <script src="/iframecheck.js"></script>
+    <link rel="stylesheet" href="/index.css" />
+    <link rel="stylesheet" href="/loader.css" />
+  </head>
 
-<body>
-  <%- include('header'); -%>
+  <body>
+    <%- include('header'); -%>
 
-  <h1>Welcome to the Main Page for Team <%=team%></h1>
-  <a href="/">Back to Team Search</a>
+    <h1>Welcome to the Main Page for Team <%=team%></h1>
+    <button id="back-button" style="margin-top: 10px;">⬇ Back to Team Search</button>
+    <script>
+      document.getElementById('back-button').addEventListener('click', () => {
+        window.parent.postMessage({ type: 'reverse-animation' }, '*');
+      });
+    </script>
 
-  <h2>event codes</h2>
+    <h2>event codes</h2>
 
-  <ul>
-    <% eventData.forEach(event=> { %>
-    <li>
-      <%=event.name%> (<%=event.event_code%>, <%=event.end_date%>)
-      <ol>
-        <% allMatchData.forEach(matchArray=> { %> <% matchArray.forEach(match=>
-        { %> <% if (match.key.includes(event.event_code)) { %>
-        <li>
-          <a href="/match/<%=match.key%>/<%=team %>">
-            <%=match.fancy_comp_level%>-<%=match.fancy_match_number%>
-          </a>
-        </li>
-        <% } %> <% }); %> <% }); %>
-      </ol>
-    </li>
-    <% }); %>
-  </ul>
-</body>
+    <ul>
+      <% eventData.forEach(event=> { %>
+      <li>
+        <%=event.name%> (<%=event.event_code%>, <%=event.end_date%>)
+        <ol>
+          <% allMatchData.forEach(matchArray=> { %> <% matchArray.forEach(match=>
+          { %> <% if (match.key.includes(event.event_code)) { %>
+          <li>
+            <a href="#" onclick="triggerPageTransition('/match/<%=match.key%>/<%=team %>'); return false;">
+              <%=match.fancy_comp_level%>-<%=match.fancy_match_number%>
+            </a>
+          </li>
+          <% } %> <% }); %> <% }); %>
+        </ol>
+      </li>
+      <% }); %>
+    </ul>
+
+    <div id="loading-box" style="display: none;"><span class="blinking">Loading...</span></div>
+    <iframe id="preload-frame"></iframe>
+    <script src="/loader.js" defer></script>
+  </body>
+</html>

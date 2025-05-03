@@ -1,0 +1,51 @@
+/* Fly-up loading overlay */
+#loading-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #4ca1af;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: bold;
+    z-index: 1000;
+    animation: flyUpOverlay 0.8s ease-out;
+    transition: transform 0.8s ease-out;
+  }
+  
+  /* Blinking text inside the loading overlay */
+  #loading-box .blinking {
+    animation: blinker 1.5s linear infinite;
+  }
+  
+  @keyframes flyUpOverlay {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes blinker {
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  /* Hidden iframe that slides in */
+  #preload-frame {
+    position: fixed;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    z-index: 1001;
+    transition: top 0.8s ease-out;
+    display: block;
+  }
