@@ -1,20 +1,24 @@
 import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
-import { TeamDataFetcher } from './util.js';
+import { TeamDataFetcher } from './util.js'; // Custom module
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { mongoose } from 'mongoose';
 
+// Patch for __dirname and __filename in ESM (real solution is WIP in Node.js next version)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// load environment variables
 dotenv.config();
-const fetchTeamData = new TeamDataFetcher();
+const fetchTeamData = new TeamDataFetcher(); // Utils
 
 const apiKey = process.env.API_KEY;
 const mongoIP = process.env.MONGO_IP;
 const mongoPort = process.env.MONGO_PORT;
+
+// set up express
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -22,8 +26,9 @@ app.use(express.json());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(express.static('public'));
+app.use(express.static('public')); // serve static files
 
+// mongoose connect
 mongoose
   .connect(`mongodb://${mongoIP}:${mongoPort}/strategydb`, {})
   .then(() => {
@@ -33,6 +38,8 @@ mongoose
     console.error('MongoDB connection error:', err);
   });
 
+// API routes
+// This is a pass-through route to the TBA API, mainly for debugging
 app.use('/api/tba', (req, res) => {
   const reroutePath = req.originalUrl.replace('/api/tba', '');
   const fetchUrl = `https://www.thebluealliance.com/api/v3${reroutePath}`;
@@ -53,6 +60,7 @@ app.use('/api/tba', (req, res) => {
     });
 });
 
+// This is a pass-through route to the Statbotics API
 app.use('/api/statbotics', (req, res) => {
   const reroutePath = req.originalUrl.replace('/api/statbotics', '');
   const fetchUrl = `https://api.statbotics.io/v3${reroutePath}`;
@@ -73,6 +81,8 @@ app.use('/api/statbotics', (req, res) => {
     });
 });
 
+
+// Whiteboard database setup
 const whiteboardSchema = new mongoose.Schema({
   matchKey: String,
   teamNumber: String,
@@ -80,20 +90,16 @@ const whiteboardSchema = new mongoose.Schema({
   data: Object,
 });
 
+// Create the Whiteboard model (actually it's not create, it's rather get)
 const Whiteboard = mongoose.model('Whiteboard', whiteboardSchema);
 
+// Routes
 app.get('/', async (req, res) => {
-  // console.log(await fetchTeamData.fetchTeamDataStatbotics(1));
-  // console.log(await fetchTeamData.fetchAllEventsCurrentYearTBA(1));
-  // console.log(await fetchTeamData.fetchAllEventCodesCurrentYear(10252));
-  // console.log(await fetchTeamData.fetchAllMatchesAtEventTBA(10252, "cabe"));
-  // console.log(await fetchTeamData.fetchAllMatchKeysAtEventTBA(10252, "casj"));
-
   res.sendFile('index.html', { root: path.join(__dirname, 'public') });
-  //temp for now. we can do login later
 });
 
 app.get('/team/:team/', async (req, res) => {
+  // API query for team
   const team = req.params.team;
   try {
     const allEvents = await fetchTeamData.fetchAllEventsCurrentYearTBA(team);
@@ -141,7 +147,6 @@ app.get('/team/:team/', async (req, res) => {
           })
       );
     }
-    // console.log(eventData)
 
     res.render('mainpage', { team, eventData, allMatchData });
   } catch (error) {
@@ -152,6 +157,7 @@ app.get('/team/:team/', async (req, res) => {
   }
 });
 
+// Match for a specific team
 app.get('/match/:matchKey/:team', async (req, res) => {
   const matchKey = req.params.matchKey;
   const matchData = await fetchTeamData.fetchMatchDataTBA(matchKey);
@@ -165,6 +171,7 @@ app.get('/redirect/team/', async (req, res) => {
   res.redirect(`/team/${team}`);
 });
 
+// Whiteboard for a specific team for a specific match for a specific game phase
 app.get('/whiteboard/:matchKey/:teamNumber/:gamePhase', async (req, res) => {
   const matchKey = req.params.matchKey;
   const gamePhase = req.params.gamePhase;
@@ -186,6 +193,7 @@ app.get('/whiteboard/:matchKey/:teamNumber/:gamePhase', async (req, res) => {
   });
 });
 
+// Save to db
 app.post('/save/whiteboard', async (req, res) => {
   const { matchKey, teamNumber, gamePhase, data } = req.body;
 
@@ -193,7 +201,7 @@ app.post('/save/whiteboard', async (req, res) => {
     matchKey,
     teamNumber,
     gamePhase,
-    data,
+    data, // This is a json object representing the whiteboard state
   });
 
   try {
@@ -207,6 +215,7 @@ app.post('/save/whiteboard', async (req, res) => {
   }
 });
 
+// Fetch from db
 app.get('/saved/whiteboard', async (req, res) => {
   const matchKey = req.query.matchKey;
   const teamNumber = req.query.teamNumber;
@@ -226,6 +235,7 @@ app.get('/saved/whiteboard', async (req, res) => {
   }
 });
 
+// Delete from db. Not implemented in frontend
 app.delete('/delete/whiteboard', async (req, res) => {
   const { matchKey, teamNumber, gamePhase } = req.body;
 
@@ -238,6 +248,7 @@ app.delete('/delete/whiteboard', async (req, res) => {
   }
 });
 
+// 404 catch
 app.use((req, res, next) => {
   var error = `Page not found`;
   res.status(404).render('404', { error });

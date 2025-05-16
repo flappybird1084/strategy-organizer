@@ -1,3 +1,6 @@
+// This file is used to trigger the page transition (swipe up)
+// It is portable across all pages
+
 const messages = [
     'Stealing data from TAB & Statbotics...',
     'Getting ready to roll...',
@@ -7,8 +10,9 @@ const messages = [
     'Burning Spark MAX...'
 ];
 
+// Function to trigger the page transition
 function triggerPageTransition(targetUrl) {
-    let blocker = document.getElementById('ui-blocker');
+    let blocker = document.getElementById('ui-blocker'); // UI blocker is active during the transition to prevent clicking on the moving content
     if (!blocker) {
       blocker = document.createElement('div');
       blocker.id = 'ui-blocker';
@@ -23,16 +27,17 @@ function triggerPageTransition(targetUrl) {
     }
     document.body.appendChild(blocker);
 
+    // This is the box that contains the messages above
     const loadingBox = document.getElementById('loading-box');
     loadingBox.style.display = 'flex';
     loadingBox.textContent = '';
     const span = document.createElement('span');
     span.className = 'blinking';
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)]; // Random pick
     span.textContent = randomMessage;
     loadingBox.appendChild(span);
   
-    const iframe = document.getElementById('preload-frame');
+    const iframe = document.getElementById('preload-frame'); // Frame that contains the new/target page
     iframe.src = '';
     iframe.style.display = 'block';
     iframe.style.top = '100%';
@@ -40,13 +45,14 @@ function triggerPageTransition(targetUrl) {
     document.body.style.overflow = 'hidden';
     iframe.src = targetUrl;
   
-    iframe.onload = () => {
+    iframe.onload = () => { // When the ui loads, we remove the blocker and reset the iframe, and finish the animation
       iframe.style.top = '0';
       const blocker = document.getElementById('ui-blocker');
       if (blocker) blocker.remove();
     };
   }
   
+  // Reverse animation when the back button is clicked
   window.addEventListener('message', (event) => {
     if (event.data?.type === 'reverse-animation') {
       const iframe = document.getElementById('preload-frame');
