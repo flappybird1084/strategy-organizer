@@ -1,26 +1,7 @@
-// class TeamDataFetcher {
-//     async fetchTeamDataStatbotics(teamId) {
-//       const url = `localhost:3000/api/statbotics/team/${teamId}`;
-//       const response = await fetch(url);
-//       const data = await response.json();
-//       return data;
-//     }
+const BASE_URL = 'http://localhost:3000'; // No easy way to get this dynamically
 
-import { set } from 'mongoose';
-
-//     async fetchAllEventsCurrentYearTBA(teamId, year = 2025) {
-//       const url = `localhost:3000/api/tba/team/${"frc" + teamId}/events/${year}/matches`;
-//       const response = await fetch(url);
-//       const data = await response.json();
-//       return data;
-//     }
-//   }
-
-//   module.exports = TeamDataFetcher;
-// // export default TeamDataFetcher;
-
-const BASE_URL = 'http://localhost:3000';
 export class TeamDataFetcher {
+  // Fetch team data from Statbotics API for a given team ID
   async fetchTeamDataStatbotics(teamId) {
     try {
       const url = `${BASE_URL}/api/statbotics/team/${teamId}`;
@@ -38,6 +19,7 @@ export class TeamDataFetcher {
     }
   }
 
+  // Fetch all events for the current year from The Blue Alliance (TBA) for a given team ID
   async fetchAllEventsCurrentYearTBA(teamId, year = 2025) {
     try {
       const url = `${BASE_URL}/api/tba/team/${'frc' + teamId}/events/${year}`;
@@ -55,13 +37,15 @@ export class TeamDataFetcher {
     }
   }
 
+  // Fetch all event codes for the current year for a given team ID
   async fetchAllEventCodesCurrentYear(teamId, year = 2025) {
     const eventCodes = [];
     try {
+      // Retrieve all events first
       const allEvents = await this.fetchAllEventsCurrentYearTBA(teamId, year);
+      // Extract event codes from each event object
       allEvents.forEach(event => {
         const eventCode = event.event_code;
-        // console.log(eventName);
         eventCodes.push(eventCode);
       });
     } catch (error) {
@@ -71,6 +55,7 @@ export class TeamDataFetcher {
     return eventCodes;
   }
 
+  // Fetch all matches for a specific event at TBA for a given team ID and event code
   async fetchAllMatchesAtEventTBA(teamId, eventCode, year = 2025) {
     try {
       const response = await fetch(
@@ -89,14 +74,17 @@ export class TeamDataFetcher {
     }
   }
 
+  // Fetch all match keys for a specific event at TBA for a given team ID and event code
   async fetchAllMatchKeysAtEventTBA(teamId, eventCode, year = 2025) {
     try {
+      // Retrieve all matches at the event first
       const response = await this.fetchAllMatchesAtEventTBA(
         teamId,
         eventCode,
         year
       );
       const matchKeys = [];
+      // Extract the match key from each match object
       for (const match of response) {
         matchKeys.push(match.key);
       }
@@ -107,22 +95,24 @@ export class TeamDataFetcher {
     }
   }
 
+  // Fetch detailed match data from TBA for a given match key
   async fetchMatchDataTBA(matchKey) {
     try {
       const response = await fetch(`${BASE_URL}/api/tba/match/${matchKey}`);
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch matches for event ${eventCode}: ${response.statusText}`
+          `Failed to fetch match data for match ${matchKey}: ${response.statusText}`
         );
       }
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error(`Error fetching matches for event ${eventCode}:`, error);
+      console.error(`Error fetching match data for match ${matchKey}:`, error);
       throw error;
     }
   }
 
+  // Convert competition level code to a more descriptive name
   getFancyQualName(comp_level) {
     switch (comp_level) {
       case 'qm':
@@ -136,6 +126,7 @@ export class TeamDataFetcher {
     }
   }
 
+  // Determine the appropriate match number to display based on competition level
   getFancyMatchNumber(comp_level, match_number, set_number) {
     switch (comp_level) {
       case 'qm':
@@ -149,6 +140,7 @@ export class TeamDataFetcher {
     }
   }
 
+  // Fetch match data from Statbotics API for a given match key
   async getStatboticsMatchData(matchKey) {
     try {
       const response = await fetch(
@@ -156,13 +148,13 @@ export class TeamDataFetcher {
       );
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch matches for event ${eventCode}: ${response.statusText}`
+          `Failed to fetch match data for match ${matchKey}: ${response.statusText}`
         );
       }
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error(`Error fetching matches for event ${eventCode}:`, error);
+      console.error(`Error fetching match data for match ${matchKey}:`, error);
       throw error;
     }
   }

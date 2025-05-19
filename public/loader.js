@@ -1,5 +1,14 @@
-// This file is used to trigger the page transition (swipe up)
-// It is portable across all pages
+/**
+ * Loader Module
+ * -------------
+ * This script handles smooth page transitions across all pages in the application.
+ *
+ * This script will:
+ * - Display a loading screen with a randomized fun message during navigation.
+ * - Block user interaction during the transition to avoid UI glitches.
+ * - Preload the target page in an invisible iframe and smoothly slides it into view.
+ * - Also it supports reverse transition animation (e.g., when navigating back).
+ */
 
 const messages = [
     'Stealing data from TAB & Statbotics...',

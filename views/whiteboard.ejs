@@ -287,19 +287,34 @@
     ></div>
 
     <script>
-      let draggablePositions = [];
-      let strokes = [];
-      let currentStroke = [];
-      let redoStack = [];
-      const whiteboard = document.getElementById('whiteboard');
-      // Track unsaved changes
-      let isSaved = true;
+      /*
+        Whiteboard Application
+        ---------------------
+        This script implements a collaborative whiteboard for strategy planning. Users can:
+        - Draw freehand strokes on a canvas using selectable brush colors.
+        - Drag and position team markers (draggables) on the board.
+        - Save and load whiteboard states (including strokes and draggable positions) to/from the server.
+        - Undo/redo drawing actions and clear the board.
+        - Switch between different game phases, each with its own board state.
+        The code handles drawing, drag-and-drop, color selection, state management, and server communication.
+      */
+      // ------------------------------
+      // Initial variable declarations
+      // ------------------------------
+      let draggablePositions = []; // Stores the positions of draggable team markers
+      let strokes = [];            // Stores all drawn strokes (each stroke is an array of line segments)
+      let currentStroke = [];      // Stores the segments of the currently drawn stroke
+      let redoStack = [];          // Stores undone strokes for redo functionality
+      const whiteboard = document.getElementById('whiteboard'); // Canvas element
+      let isSaved = true;          // Tracks whether the whiteboard state is saved
 
+      // Game phase and navigation button highlighting
       const gamePhase = '<%= gamePhase %>';
       const autonomousButton = document.getElementById('autonomous-button');
       const teleopButton = document.getElementById('teleop-button');
       const endgameButton = document.getElementById('endgame-button');
 
+      // Highlight the button for the current phase
       if (gamePhase === 'autonomous') {
         autonomousButton.style.boxShadow =
           '0 0 10px 5px rgba(255, 131, 131, 0.7)';
@@ -309,33 +324,43 @@
         endgameButton.style.boxShadow = '0 0 10px 5px rgba(154, 99, 255, 0.7)';
       }
 
+      // Canvas context and background
       const ctx = whiteboard.getContext('2d');
       whiteboard.style.backgroundImage = 'url(/images/reefscape-bg-2.png)';
 
-      let drawing = false;
-      let lastX = 0;
-      let lastY = 0;
-      let brushSize = 5;
-      let brushColor = 'black';
+      // Drawing state variables
+      let drawing = false; // True when drawing is in progress
+      let lastX = 0;       // Last X coordinate during drawing
+      let lastY = 0;       // Last Y coordinate during drawing
+      let brushSize = 5;   // Brush thickness
+      let brushColor = 'black'; // Current brush color
       const colorButton = document.getElementById('color-button');
       const colorPopup = document.getElementById('color-popup');
 
+      // -------------------------
+      // Event listeners
+      // -------------------------
+
+      // Show/hide color picker popup when the color button is clicked
       colorButton.addEventListener('click', () => {
         colorPopup.style.display =
           colorPopup.style.display === 'none' ? 'block' : 'none';
       });
 
+      // Handle color selection from the color swatches
       document.querySelectorAll('.color-swatch').forEach(swatch => {
         swatch.addEventListener('click', e => {
-          brushColor = e.target.getAttribute('data-color');
+          brushColor = e.target.getAttribute('data-color'); // Set brush color
+          // Visually indicate the selected color
           document
             .querySelectorAll('.color-swatch')
             .forEach(s => s.classList.remove('selected'));
           e.target.classList.add('selected');
-          colorPopup.style.display = 'none';
+          colorPopup.style.display = 'none'; // Hide color picker
         });
       });
 
+      // Start drawing on mousedown (ignore if clicking a draggable)
       whiteboard.addEventListener('mousedown', e => {
         if (e.target.classList.contains('draggable')) return;
         currentStroke = [];
@@ -343,22 +368,25 @@
         lastX = (e.offsetX * whiteboard.width) / whiteboard.clientWidth;
         lastY = (e.offsetY * whiteboard.height) / whiteboard.clientHeight;
         isSaved = false;
-        console.log('mousedown at', e.offsetX, e.offsetY);
+        // console.log('mousedown at', e.offsetX, e.offsetY);
       });
 
+      // Stop drawing on mouseup, push the stroke to the strokes array
       whiteboard.addEventListener('mouseup', () => {
         drawing = false;
         if (currentStroke.length > 0) {
           strokes.push(currentStroke);
-          redoStack = [];
+          redoStack = []; // Clear redo stack after new action
         }
       });
 
+      // Stop drawing if mouse leaves the canvas
       whiteboard.addEventListener('mouseout', () => {
         drawing = false;
-        console.log('mouseout');
+        // console.log('mouseout');
       });
 
+      // Draw lines as the mouse moves while drawing
       whiteboard.addEventListener('mousemove', e => {
         if (!drawing || e.target.classList.contains('draggable')) return;
 
@@ -374,14 +402,20 @@
         ctx.lineTo(x, y);
         ctx.stroke();
 
+        // Save segment for undo/redo and persistence
         currentStroke.push({ x, y, lastX, lastY, brushSize, brushColor });
 
         lastX = x;
         lastY = y;
         isSaved = false;
-        console.log(`mousemove at ${x}, ${y}`);
+        // console.log(`mousemove at ${x}, ${y}`);
       });
 
+      // -------------------------
+      // Functions
+      // -------------------------
+
+      // Redraws all strokes on the canvas (used after undo/redo/load)
       function redrawWhiteboard() {
         ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
         for (const stroke of strokes) {
@@ -397,6 +431,7 @@
         }
       }
 
+      // Displays a notification message (success or error)
       function showNotification(message, isError = false) {
         const notification = document.getElementById('notification');
         notification.textContent = message;
@@ -407,31 +442,33 @@
         }, 3000);
       }
 
-      // window.addEventListener('resize', () => {
-      //   whiteboard.width = window.innerWidth;
-      //   whiteboard.height = window.innerHeight;
-      // });
-
+      // Set canvas size (fixed for this whiteboard)
       whiteboard.width = 1200;
       whiteboard.height = 600;
 
+      // -------------------------
+      // Drag-and-drop for draggables
+      // -------------------------
       const draggables = document.querySelectorAll('.draggable');
-      let offsetX, offsetY;
+      let offsetX, offsetY; // Offset between mouse and draggable's top-left
 
       draggables.forEach(draggable => {
+        // Start dragging: record offset and set dragging state
         draggable.addEventListener('mousedown', e => {
           const rect = draggable.getBoundingClientRect();
           offsetX = e.clientX - rect.left;
           offsetY = e.clientY - rect.top;
           draggable.classList.add('dragging');
-          console.log('mousedown on draggable', e.clientX, e.clientY);
+          // console.log('mousedown on draggable', e.clientX, e.clientY);
         });
 
+        // Prevent default drag behavior (we use our own)
         draggable.addEventListener('dragstart', e => {
           e.preventDefault();
           e.preventDefault();
         });
 
+        // Move the draggable as the mouse moves, if dragging
         document.addEventListener('mousemove', e => {
           if (!draggable.classList.contains('dragging')) return;
 
@@ -444,6 +481,7 @@
           let newLeft = e.clientX - offsetX;
           let newTop = e.clientY - offsetY;
 
+          // Constrain within the whiteboard container
           newLeft = Math.max(
             containerRect.left,
             Math.min(newLeft, containerRect.right - draggableWidth)
@@ -457,28 +495,37 @@
           draggable.style.top = `${newTop - containerRect.top}px`;
         });
 
+        // Stop dragging on mouseup
         document.addEventListener('mouseup', () => {
           draggable.style.cursor = 'grab';
           draggable.classList.remove('dragging');
         });
       });
 
+      // Clears the whiteboard and resets drawing history
       function clearWhiteboard() {
         ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
         strokes = [];
         redoStack = [];
       }
 
+      // -------------------------
+      // Whiteboard control buttons
+      // -------------------------
       const clearButton = document.getElementById('clear-button');
       const saveButton = document.getElementById('save-button');
       const loadButton = document.getElementById('load-button');
       const undoButton = document.getElementById('undo-button');
       const redoButton = document.getElementById('redo-button');
 
+      // Clear button: clears all strokes from the whiteboard
       clearButton.addEventListener('click', () => {
         clearWhiteboard();
       });
+
+      // Save button: saves strokes and draggable positions to the server
       saveButton.addEventListener('click', () => {
+        // Calculate draggable positions as percentages relative to the whiteboard
         const whiteboardRect = whiteboard.getBoundingClientRect();
         document.querySelectorAll('.draggable').forEach(draggable => {
           const rect = draggable.getBoundingClientRect();
@@ -491,15 +538,14 @@
           draggablePositions.push(position);
         });
 
-        console.log('drag pos', draggablePositions);
-
-        console.log(strokes);
+        // console.log('drag pos', draggablePositions);
+        // console.log(strokes);
+        // Send strokes and draggable positions to the server via POST
         fetch('/save/whiteboard', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          // body: JSON.stringify({ strokes })
           body: JSON.stringify({
             data: { strokes: strokes, draggablePositions: draggablePositions },
             matchKey: '<%=matchKey%>',
@@ -519,13 +565,17 @@
             showNotification('❌ Failed to save whiteboard.', true);
           });
       });
+
+      // Load button: fetches saved whiteboard state from the server
       loadButton.addEventListener('click', () => {
         const matchKey = '<%=matchKey%>';
         const teamNumber = '<%=teamNumber%>';
         const gamePhase = '<%=gamePhase%>';
 
+        // Compose URL to fetch saved whiteboard data
         const url = `/saved/whiteboard?matchKey=${matchKey}&teamNumber=${teamNumber}&gamePhase=${gamePhase}`;
 
+        // Fetch the whiteboard state (GET)
         fetch(url, {
           method: 'GET',
           headers: {
@@ -539,43 +589,47 @@
             return response.json();
           })
           .then(data => {
-            console.log('Data:', data);
+            // Restore strokes and draggable positions
+            // console.log('Data:', data);
             strokes = data[0].data.strokes;
             draggablePositions = data[0].data.draggablePositions;
             updateDraggablePositions();
-
-            console.log('Strokes:', strokes);
-            console.log('Draggable Positions:', draggablePositions);
+            // console.log('Strokes:', strokes);
+            // console.log('Draggable Positions:', draggablePositions);
             redrawWhiteboard();
             showNotification('✅ Whiteboard loaded successfully!');
           })
           .catch(error => {
-            console.error('Error fetching whiteboard:', error);
+            // console.error('Error fetching whiteboard:', error);
             showNotification('❌ Failed to load whiteboard.', true);
           });
       });
 
+      // Updates the positions of draggable elements based on draggablePositions array
       updateDraggablePositions = () => {
         const whiteboardContainer = document.getElementById(
           'whiteboard-container'
         );
-        console.log('full draggable positions', draggablePositions);
+        // Only keep the last 6 draggable positions (one per team marker)
+        // console.log('full draggable positions', draggablePositions);
         draggablePositions = draggablePositions.splice(
           draggablePositions.length - 6
         );
 
         document.querySelectorAll('.draggable').forEach((draggable, index) => {
           const newDraggablePosition = draggablePositions[index];
-          console.log(
-            'new draggable position of index ',
-            index,
-            'is ',
-            newDraggablePosition
-          );
+          // console.log(
+          //   'new draggable position of index ',
+          //   index,
+          //   'is ',
+          //   newDraggablePosition
+          // );
           draggable.style.left = `${newDraggablePosition.left}%`;
           draggable.style.top = `${newDraggablePosition.top}%`;
         });
       };
+
+      // Undo button: removes the last stroke
       undoButton.addEventListener('click', () => {
         if (strokes.length > 0) {
           const undone = strokes.pop();
@@ -583,6 +637,7 @@
           redrawWhiteboard();
         }
       });
+      // Redo button: restores the most recently undone stroke
       redoButton.addEventListener('click', () => {
         if (redoStack.length > 0) {
           const redone = redoStack.pop();
